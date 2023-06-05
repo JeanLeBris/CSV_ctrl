@@ -1,0 +1,17 @@
+print : Permet d'afficher les tableaux
+
+	-file [nom du fichier] : Argument permettant d'entrer le nom du fichier dont nous afficherons les données ou un tableau
+
+	-table [nom du tableau] : Argument permettant d'entrer le nom du tableau dont nous afficherons le contenu
+	-table -all : Argument permettant d'entrer le nom du tableau dont nous afficherons le contenu
+
+	-arguments [argument1, argument2, ...] : Argument permettant d'entrer les arguments dont nous afficherons le contenu
+	-arguments -all : Argument permettant de choisir d'afficher tous les arguments du tableau
+
+create : Permet de créer un tableau ou un fichier
+
+modify : Permet de modifier un tableau
+
+quit : Permet de quitter le programme
+
+help : Permet d'ouvrir l'aide du programme
