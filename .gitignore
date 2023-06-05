@@ -56,4 +56,5 @@ bin/
 dobj/
 fics/
 obj/
+doc/
 *.exe

@@ -1,10 +1,10 @@
-exe:bin/progLinux.exe
+exe:bin/CSV_Controller.exe
 
-bin/progLinux.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o bin projet_002.exe
-	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o bin/progLinux.exe
+bin/CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o bin CSV_Controller.exe
+	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o bin/CSV_Controller.exe
 
-projet_002.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o
-	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o projet_002.exe
+CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o
+	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o CSV_Controller.exe
 
 obj/main.o:src/main.c obj
 	gcc -Wall -c src/main.c -o obj/main.o
@@ -54,9 +54,8 @@ clean:
 	rm dobj/*.o
 	rmdir dobj
 	rm bin/*.exe
-	rm projet_002.exe
-	rm debug.exe
+	rm *.exe
 	rmdir bin
 
 zip:
-	zip "Projet 002.zip" src/*.c lib/*.h makefile
+	zip "CSV_Controller.zip" src/*.c lib/*.h makefile
