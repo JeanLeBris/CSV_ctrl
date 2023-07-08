@@ -10,6 +10,10 @@ print : Permet d'afficher les tableaux
 
 create : Permet de créer un tableau ou un fichier
 
+	-file [nom du fichier] : Argument permettant d'entrer le nom du fichier que nous créerons
+
+	-table [nom du tableau] : Argument permettant d'entrer le nom du tableau que nous créerons
+
 modify : Permet de modifier un tableau
 
 quit : Permet de quitter le programme

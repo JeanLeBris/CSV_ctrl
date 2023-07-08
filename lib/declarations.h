@@ -50,6 +50,7 @@ int IsEmptyTable(tableType table);
 // Push
 
 tableLineType PushBackTableLine(tableLineType tableLine, char *value);
+tableLineType PushBackTableLineBis(tableLineType tableLine, char *value);
 tableType PushBackTable(tableType table, tableLineType* tableLine);
 
 // Pull
@@ -90,6 +91,7 @@ tableType GetFileData(tableType table, char *fileName);
 tableType CreateFileTable(tableType table, char tableName[25][25]);
 void SetFileData(tableType table, char *fileName);
 tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]);
+tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25], char tableValues[25][25], int tableSize);
 tableType SetTable(tableType tables, tableType tableBuffer);
 
 #endif

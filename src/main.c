@@ -22,6 +22,7 @@ int main(void){
 	commandElement *node = NULL;
 
 	int iterator1 = 0;
+	int iterator2 = 0;
 	char action[25];             // Contains the action to do with the data
 	char fileName[100];
 	char tableName[25][25];      // Contains the name of the table taken by the command
@@ -300,12 +301,32 @@ int main(void){
 				tablesBrut = CreateFileTable(tablesBrut, tableName);
 				SetFileData(tablesBrut, fileName);
 			}
-			else{
+			else if(strcmp(tableValues[0], "__ALLVALUES__") == 0){
 				tablesBrut = GetFileData(tablesBrut, fileName);
 				tableBuffer = GetTable(tablesBrut, tableName);
 				tableBuffer = CreateFileTableColumn(tableBuffer, tableArguments);
 				tablesBrut = SetTable(tablesBrut, tableBuffer);
 				SetFileData(tablesBrut, fileName);
+			}
+			else{
+				iterator1 = 0;
+				for(int i = 0; strcmp(tableArguments[i], "__END__") != 0; i++){
+					iterator1++;
+				}
+				iterator2 = 0;
+				for(int i = 0; strcmp(tableValues[i], "__END__") != 0; i++){
+					iterator2++;
+				}
+				if(iterator1 != iterator2){
+					PrintError();
+				}
+				else{
+					tablesBrut = GetFileData(tablesBrut, fileName);
+					tableBuffer = GetTable(tablesBrut, tableName);
+					tableBuffer = CreateFileTableLine(tableBuffer, tableArguments, tableValues, iterator1);
+					tablesBrut = SetTable(tablesBrut, tableBuffer);
+					SetFileData(tablesBrut, fileName);
+				}
 			}
 		}
 		else if(strcmp(action, "quit") == 0){

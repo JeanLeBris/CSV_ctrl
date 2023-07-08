@@ -26,9 +26,12 @@ command PushBackCommand(command commandList, char *commandInput){
 		int j = 0;
 		
 		while(commandInput[i] != ' ' && commandInput[i] != '\0'){
-			node->value[j] = commandInput[i];
+			if(commandInput[i] < 32);
+			else{
+				node->value[j] = commandInput[i];
+				j++;
+			}
 			i++;
-			j++;
 		}
 		if(commandInput[i] == ' ' || commandInput[i] == '\0'){
 			node->value[j] = '\0';

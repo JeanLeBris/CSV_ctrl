@@ -139,6 +139,61 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 
 	return tableLine;
 }
+tableLineType PushBackTableLineBis(tableLineType tableLine, char *line){
+	int i = 0;
+	int j = 0;
+	tableCellType *node = NULL;
+
+	while(line[i] != '\0'){
+		node = malloc(sizeof(tableCellType));
+
+		node->back = NULL;
+		node->next = NULL;
+		node->lenght = 0;
+		j = 0;
+		
+		while(line[i] != ';' && line[i] != '\n' && line[i] != '\0'){
+			if(line[i] < 32);
+			else{
+				node->value[j] = line[i];
+				node->lenght++;
+				j++;
+			}
+			i++;
+		}
+
+		node->value[j] = '\0';
+		if(line[i] != '\0'){
+			i++;
+		}
+
+		if(IsNullTableLine(tableLine)){
+			tableLine = malloc(sizeof(*tableLine));
+
+			tableLine->lenght = 0;
+			tableLine->begin = node;
+			tableLine->end = node;
+			tableLine->back = NULL;
+			tableLine->next = NULL;
+		}
+		else if(IsEmptyTableLine(tableLine)){
+			tableLine->lenght = 0;
+			tableLine->begin = node;
+			tableLine->end = node;
+			tableLine->back = NULL;
+			tableLine->next = NULL;
+		}
+		else{
+			tableLine->end->next = node;
+			node->back = tableLine->end;
+			tableLine->end = node;
+		}
+
+		tableLine->lenght++;
+	}
+
+	return tableLine;
+}
 tableType PushBackTable(tableType table, tableLineType* tableLine){
 	if(IsNullTable(table)){
 		table = malloc(sizeof(*table));
@@ -753,6 +808,65 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][2
 	tableLineType tableLine = tableBuffer->begin;
 	
 	tableLine = PushBackTableLine(tableLine, tableArguments[0]);
+
+	return tableBuffer;
+}
+tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25], char tableValues[25][25], int tableSize){
+	int *tableIndexes = NULL;
+	tableIndexes = malloc(sizeof(*tableIndexes)*tableSize);
+
+	for(int i = 0; i < tableSize; i++){
+		tableIndexes[i] = -1;
+	}
+
+	for(int i = 0; i < tableSize; i++){
+		for(int j = 0; j < tableBuffer->width; j++){
+			if(strcmp(tableArguments[i], GetCellValue(tableBuffer, 0, j)->value) == 0){
+				tableIndexes[i] = j;
+			}
+		}
+	}
+
+	// for(int i = 0; i < tableSize; i++){
+	// 	printf("%d | ", tableIndexes[i]);
+	// }
+	// printf("\n");
+
+	for(int i = 0; i < tableSize; i++){
+		if(tableIndexes[i] == -1){
+			printf("fail");
+			return tableBuffer;
+		}
+	}
+	printf("test");
+
+	char *tempString;
+	tempString = malloc(sizeof(*tempString) * tableBuffer->width);
+	printf("test");
+
+	for(int i = 0; i < tableBuffer->width - 1; i++){
+		printf("try");
+		strcat(tempString, ";");
+	}
+
+	tableLineType tableLine;
+	printf("test");
+
+	tableLine = PushBackTableLineBis(tableLine, tempString);
+	printf("test");
+
+	free(tempString);
+	printf("test");
+
+	tableBuffer = PushBackTable(tableBuffer, &tableLine);
+	printf("test");
+
+	for(int i = 0; i < tableSize; i++){
+		printf("test");
+		strcat(GetCellValue(tableBuffer, tableBuffer->lenght - 1, tableIndexes[i])->value, tableValues[i]);
+	}
+
+	free(tableIndexes);
 
 	return tableBuffer;
 }
