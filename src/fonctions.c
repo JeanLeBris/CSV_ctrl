@@ -845,7 +845,7 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25]
 	char *tempString;
 	tempString = malloc(sizeof(*tempString) * tableBuffer->width);
 
-	for(int i = 0; i < tableBuffer->width - 1; i++){
+	for(int i = 0; i < tableBuffer->width; i++){
 		strcat(tempString, ";");
 	}
 
