@@ -76,6 +76,9 @@ int IsEmptyTable(tableType table){
 
 // Push
 
+/*
+// TODO Fixing this function by dividing it in 2, one to make the line, and the other to reduce it
+*/
 tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 	int i = 0;
 	int j = 0;
@@ -139,6 +142,9 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 
 	return tableLine;
 }
+/*
+// TODO Deleting this because it makes no sense
+*/
 tableLineType PushBackTableLineBis(tableLineType tableLine, char *line){
 	int i = 0;
 	int j = 0;
@@ -834,36 +840,28 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25]
 
 	for(int i = 0; i < tableSize; i++){
 		if(tableIndexes[i] == -1){
-			printf("fail");
+			PrintError();
 			return tableBuffer;
 		}
 	}
-	printf("test");
 
 	char *tempString;
 	tempString = malloc(sizeof(*tempString) * tableBuffer->width);
-	printf("test");
 
 	for(int i = 0; i < tableBuffer->width - 1; i++){
-		printf("try");
 		strcat(tempString, ";");
 	}
 
 	tableLineType tableLine;
-	printf("test");
 
 	tableLine = PushBackTableLineBis(tableLine, tempString);
-	printf("test");
 
 	free(tempString);
-	printf("test");
 
 	tableBuffer = PushBackTable(tableBuffer, &tableLine);
-	printf("test");
 
 	for(int i = 0; i < tableSize; i++){
-		printf("test");
-		strcat(GetCellValue(tableBuffer, tableBuffer->lenght - 1, tableIndexes[i])->value, tableValues[i]);
+		strcpy(GetCellValue(tableBuffer, tableBuffer->lenght - 1, tableIndexes[i])->value, tableValues[i]);
 	}
 
 	free(tableIndexes);

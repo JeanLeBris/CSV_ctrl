@@ -14,5 +14,5 @@ All you have to do to install this program is to :
 
 ## How to use it
 
-Make sure to put the csv files you want to read in the doc folder in the main directory
+Make sure to put the csv files you want to read in the doc folder in the main directory (may be changed in future versions)
 For more informations on how to use the program, please read fics/help.txt
