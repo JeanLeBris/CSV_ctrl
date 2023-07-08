@@ -813,7 +813,9 @@ void SetFileData(tableType table, char *fileName){
 tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]){
 	tableLineType tableLine = tableBuffer->begin;
 	
-	tableLine = PushBackTableLine(tableLine, tableArguments[0]);
+	for(int i = 0; strcmp(tableArguments[i], "__END__") != 0; i++){
+		tableLine = PushBackTableLine(tableLine, tableArguments[i]);
+	}
 
 	return tableBuffer;
 }
@@ -832,11 +834,6 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25]
 			}
 		}
 	}
-
-	// for(int i = 0; i < tableSize; i++){
-	// 	printf("%d | ", tableIndexes[i]);
-	// }
-	// printf("\n");
 
 	for(int i = 0; i < tableSize; i++){
 		if(tableIndexes[i] == -1){
