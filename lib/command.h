@@ -26,4 +26,6 @@ command InputCommand();
 commandElement* PullFrontCommand(command commandList);
 void ClearCommandElement(commandElement *node);
 
+void LogList(char *fileName, command commandList);
+
 #endif

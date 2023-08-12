@@ -3,7 +3,7 @@ exe:bin/CSV_Controller.exe
 bin/CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o bin CSV_Controller.exe
 	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o bin/CSV_Controller.exe
 
-CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o
+CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o log
 	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o CSV_Controller.exe
 
 obj/main.o:src/main.c obj
@@ -24,11 +24,14 @@ bin:
 obj:
 	mkdir obj
 
+log:
+	mkdir log
+
 
 
 debug:debug.exe
 
-debug.exe:dobj/main.o dobj/fonctions.o dobj/command.o dobj/stdout_color.o
+debug.exe:dobj/main.o dobj/fonctions.o dobj/command.o dobj/stdout_color.o log
 	gcc -g -Wall dobj/main.o dobj/fonctions.o dobj/command.o dobj/stdout_color.o -o debug.exe
 
 dobj/main.o:src/main.c dobj
@@ -46,6 +49,9 @@ dobj/stdout_color.o:src/stdout_color.c lib/stdout_color.h dobj
 dobj:
 	mkdir dobj
 
+log:
+	mkdir log
+
 
 
 clean:
@@ -56,6 +62,8 @@ clean:
 	rm bin/*.exe
 	rm *.exe
 	rmdir bin
+	rm log/*.log
+	rmdir log
 
 zip:
 	zip "CSV_Controller.zip" src/*.c lib/*.h makefile

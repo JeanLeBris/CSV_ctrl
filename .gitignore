@@ -57,4 +57,5 @@ dobj/
 fics/
 obj/
 doc/
+log/
 *.exe

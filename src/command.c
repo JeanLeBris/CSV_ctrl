@@ -130,3 +130,19 @@ commandElement* PullFrontCommand(command commandList){
 void ClearCommandElement(commandElement *node){
 	free(node);
 }
+
+void LogList(char *fileName, command commandList){
+	commandElement *node = commandList->begin;
+	FILE *file = fopen(fileName,"a");
+	if(file==NULL){
+		exit(1);
+	}
+	fprintf(file, ">>> ");
+	while(node != NULL){
+		fprintf(file, "%s ", node->value);
+		node = node->next;
+	}
+	fprintf(file, "\n");
+	fprintf(file, "size : %d\n", commandList->lenght);
+	fclose(file);
+}

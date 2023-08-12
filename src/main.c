@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "../lib/command.h"
 #include "../lib/declarations.h"
 #include "../lib/stdout_color.h"
@@ -14,8 +15,13 @@
 #define END_BIT (1<<6)
 #define DEBUG_BIT (1<<7)
 
+#define LOG_ACCESS "./log/"
+
 int main(void){
 	short runProgram = 1;
+	time_t timestamp = 0;
+	char strTimestamp[30] = "\0";
+	char logFileName[100] = "\0";
 	StdoutColorWhite();
 	
 	command commandList = NewCommand();
@@ -29,7 +35,7 @@ int main(void){
 	char tableArguments[25][25]; // Contains all the arguments taken by the command
 	char tableValues[25][25];
 	char debug = 0;
-	char controlVar = 0;
+	unsigned char controlVar = 0;
 
 	tableType tablesBrut = NewTable();  // The table that get all the file's data as value
 	tableType tableBuffer = NewTable(); // The table that get the unsorted selected data from the file
@@ -45,6 +51,11 @@ int main(void){
 		strcpy(tableValues[0], "__ALLVALUES__");
 		strcpy(tableValues[1], "__END__");
 		debug = 0;
+
+		timestamp = time(NULL);
+		sprintf(strTimestamp, "%lld", timestamp);
+		strcpy(logFileName, "\0");
+		strcat(strcat(strcat(strcat(logFileName, LOG_ACCESS), "log_"), strTimestamp), ".log");
 
 		/*
 		Get all the parameters to run the program
@@ -246,6 +257,16 @@ int main(void){
 			PrintError();
 			strcpy(action, node->value);
 			free(node);
+		}
+
+		if(debug){
+			LogList(logFileName, commandList);
+			/*action[25];             // Contains the action to do with the data
+			char fileName[100];
+			char tableName[25][25];      // Contains the name of the table taken by the command
+			char tableArguments[25][25]; // Contains all the arguments taken by the command
+			char tableValues[25][25];*/
+			LogString(logFileName, strcat("action : ", action)); // srtcat issue here gives segmentation fault
 		}
 
 		commandList = ClearCommand(commandList);
