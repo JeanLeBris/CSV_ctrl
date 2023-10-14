@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 #include "../lib/command.h"
 #include "../lib/declarations.h"
 #include "../lib/stdout_color.h"
@@ -14,13 +15,16 @@
 #define ERROR_BIT (1<<5)
 #define END_BIT (1<<6)
 #define DEBUG_BIT (1<<7)
+#define NOPRINT_BIT (1<<8)
+#define LOG_BIT (1<<9)
 
 #define LOG_ACCESS "./log/"
 
 int main(void){
 	short runProgram = 1;
-	time_t timestamp = 0;
-	char strTimestamp[30] = "\0";
+	struct timespec timestamp;
+	struct tm *timestampStruct = NULL;
+	char strTimestamp[40] = "\0";
 	char logFileName[100] = "\0";
 	StdoutColorWhite();
 
@@ -38,7 +42,9 @@ int main(void){
 	char tableArguments[25][25]; // Contains all the arguments taken by the command
 	char tableValues[25][25];
 	char debug = 0;
-	unsigned char controlVar = 0;
+	char noPrint = 0;
+	char log = 0;
+	unsigned int controlVar = 0;
 
 	tableType tablesBrut = NewTable();  // The table that get all the file's data as value
 	tableType tableBuffer = NewTable(); // The table that get the unsorted selected data from the file
@@ -54,11 +60,8 @@ int main(void){
 		strcpy(tableValues[0], "__ALLVALUES__");
 		strcpy(tableValues[1], "__END__");
 		debug = 0;
-
-		timestamp = time(NULL);
-		sprintf(strTimestamp, "%lld", timestamp);
-		strcpy(logFileName, "\0");
-		strcat(strcat(strcat(strcat(logFileName, LOG_ACCESS), "log_"), strTimestamp), ".log");
+		noPrint = 0;
+		log = 0;
 
 		/*
 		Get all the parameters to run the program
@@ -66,7 +69,21 @@ int main(void){
 
 		commandList = InputCommand();
 		commandListCopy = CopyCommand(commandList);
+
+		timespec_get(&timestamp, TIME_UTC);
+		timestampStruct = gmtime(&timestamp.tv_sec);
+
+		//sprintf(strTimestamp, "%lld", timestamp);
+		sprintf(strTimestamp, "%04d-%02d-%02d_%02d-%02d-%02d-%ld", timestampStruct->tm_year+1900, timestampStruct->tm_mon+1, timestampStruct->tm_mday, timestampStruct->tm_hour, timestampStruct->tm_min, timestampStruct->tm_sec, timestamp.tv_nsec);
+		strcpy(logFileName, "\0");
+		strcat(strcat(strcat(strcat(logFileName, LOG_ACCESS), "log_"), strTimestamp), ".log");
+
+		#if defined(__linux__)
 		system("clear");
+		#elif defined(_WIN32) || defined(_WIN64)
+		system("cls");
+		#endif
+
 		PrintCommand(commandList);
 
 		node = PullFrontCommand(commandList);
@@ -84,20 +101,26 @@ int main(void){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "-file") == 0 || strcmp(node->value, "-f") == 0){
+					if(strcmp(node->value, "--file") == 0 || strcmp(node->value, "-f") == 0){
 						controlVar = FILE_BIT;
 					}
-					else if(strcmp(node->value, "-table") == 0 || strcmp(node->value, "-t") == 0){
+					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
 					}
-					else if(strcmp(node->value, "-arguments") == 0 || strcmp(node->value, "-args") == 0 || strcmp(node->value, "-a") == 0){
+					else if(strcmp(node->value, "--arguments") == 0 || strcmp(node->value, "--args") == 0 || strcmp(node->value, "-a") == 0){
 						controlVar = ARG_BIT;
 					}
-					else if(strcmp(node->value, "-all") == 0){
+					else if(strcmp(node->value, "--all") == 0){
 						controlVar |= ALL_BIT;
 					}
-					else if(strcmp(node->value, "-debug") == 0 || strcmp(node->value, "-d") == 0){
+					else if(strcmp(node->value, "--debug") == 0 || strcmp(node->value, "-d") == 0){
 						controlVar = DEBUG_BIT;
+					}
+					else if(strcmp(node->value, "--noprint") == 0 || strcmp(node->value, "-np") == 0){
+						controlVar = NOPRINT_BIT;
+					}
+					else if(strcmp(node->value, "--log") == 0 || strcmp(node->value, "-l") == 0){
+						controlVar = LOG_BIT;
 					}
 					else{
 						controlVar = ERROR_BIT;
@@ -153,7 +176,13 @@ int main(void){
 				free(node);
 				if(controlVar == DEBUG_BIT){
 					debug = 1;
-					controlVar = END_BIT;
+					// controlVar = END_BIT;
+				}
+				if(controlVar == LOG_BIT){
+					log = 1;
+				}
+				if(controlVar == NOPRINT_BIT){
+					noPrint = 1;
 				}
 				if(controlVar == ERROR_BIT){
 					PrintError();
@@ -171,20 +200,26 @@ int main(void){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "-file") == 0 || strcmp(node->value, "-f") == 0){
+					if(strcmp(node->value, "--file") == 0 || strcmp(node->value, "-f") == 0){
 						controlVar = FILE_BIT;
 					}
-					else if(strcmp(node->value, "-table") == 0 || strcmp(node->value, "-t") == 0){
+					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
 					}
-					else if(strcmp(node->value, "-arguments") == 0 || strcmp(node->value, "-args") == 0 || strcmp(node->value, "-a") == 0){
+					else if(strcmp(node->value, "--arguments") == 0 || strcmp(node->value, "--args") == 0 || strcmp(node->value, "-a") == 0){
 						controlVar = ARG_BIT;
 					}
-					else if(strcmp(node->value, "-values") == 0 || strcmp(node->value, "-vals") == 0 || strcmp(node->value, "-v") == 0){
+					else if(strcmp(node->value, "--values") == 0 || strcmp(node->value, "--vals") == 0 || strcmp(node->value, "-v") == 0){
 						controlVar = VAL_BIT;
 					}
-					else if(strcmp(node->value, "-debug") == 0 || strcmp(node->value, "-d") == 0){
+					else if(strcmp(node->value, "--debug") == 0 || strcmp(node->value, "-d") == 0){
 						controlVar = DEBUG_BIT;
+					}
+					else if(strcmp(node->value, "--noprint") == 0 || strcmp(node->value, "-np") == 0){
+						controlVar = NOPRINT_BIT;
+					}
+					else if(strcmp(node->value, "--log") == 0 || strcmp(node->value, "-l") == 0){
+						controlVar = NOPRINT_BIT;
 					}
 					else{
 						controlVar = ERROR_BIT;
@@ -263,7 +298,7 @@ int main(void){
 			free(node);
 		}
 
-		if(debug){
+		if(log){
 			LogList(logFileName, commandListCopy); // issue because commandList is void at this point
 			ClearCommand(commandListCopy);
 			/*action[25];             // Contains the action to do with the data
@@ -301,32 +336,43 @@ int main(void){
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
 				tableBuffer = tablesBrut;
 				table = tableBuffer;
-				PrintTable(table, stdout); //
+				if(noPrint == false)
+					PrintTable(table, stdout); //
+				if(log){
+					LogTable(logFileName, table);
+				}
 			}
 			else{
 				tableBuffer = GetTable(tablesBrut, tableName);
-				if(tableBuffer == NULL){
-					printf("Error table name\n");
-				}
-				else{
+				if(tableBuffer != NULL){
 					if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
 						table = tableBuffer;
-						PrintTable(table, stdout); //
+						if(noPrint == false)
+							PrintTable(table, stdout); //
+						if(log){
+							LogTable(logFileName, table);
+						}
 					}
 					else{
 						table = GetAssortedTable(tableBuffer, tableArguments);
-						if(table == NULL){
-							printf("Error table arguments\n");
+						if(table != NULL){
+							if(noPrint == false)
+								PrintTable(table, stdout); //
+							if(log){
+								LogTable(logFileName, table);
+							}
 						}
 						else{
-							PrintTable(table, stdout); //
+							printf("Error table arguments\n");
 						}
 					}
 				}
+				else{
+					printf("Error table name\n");
+				}
 			}
 			if(debug){
-				// ToPrint(action, tableName, tableArguments, table);
-				LogTable(logFileName, table);
+				ToPrint(action, tableName, tableArguments, table);
 			}
 		}
 		else if(strcmp(action, "create") == 0){
@@ -414,5 +460,3 @@ int main(void){
 
 	return 0;
 }
-
-// print -t mytable -args arg1 arg2 arg3
