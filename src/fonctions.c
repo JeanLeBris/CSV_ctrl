@@ -580,94 +580,94 @@ void GetTableCellWidth(tableType table){
 
 // Print
 
-void PrintTable(tableType table){
+void PrintTable(tableType table, FILE *flow){
 	if(table != NULL){
 		tableLineType tableLine = table->begin;
 		tableCellType *tableCell = NULL;
-		printf("============================================================\n");
+		fprintf(flow, "============================================================\n");
 		StdoutColorRed();
-		printf("%s\n", table->name);
+		fprintf(flow, "%s\n", table->name);
 		StdoutColorReset();
-		printf("============================================================\n");
-		printf("\n");
+		fprintf(flow, "============================================================\n");
+		fprintf(flow, "\n");
 		if(strcmp(table->name, "__ALLTABLES__") != 0){
 			for(int i = 0; i < table->width; i++){
-				printf("+");
+				fprintf(flow, "+");
 				for(int j = 0; j < table->cellWidth[i]; j++){
-					printf("-");
+					fprintf(flow, "-");
 				}
 			}
-			printf("+\n");
+			fprintf(flow, "+\n");
 			for(int i = 0; i < table->width; i++){
 				tableCell = GetCellValue(table, 0, i);
 				if (tableCell == NULL){
-					printf("|");
+					fprintf(flow, "|");
 					for (int j = 0; j < table->cellWidth[i]; j++)
-						printf(" ");
+						fprintf(flow, " ");
 				}
 				else{
-					printf("|");
+					fprintf(flow, "|");
 					StdoutColorBlue();
-					printf("%s", tableCell->value);
+					fprintf(flow, "%s", tableCell->value);
 					StdoutColorReset();
 					for (int j = 0; j < table->cellWidth[i] - tableCell->lenght; j++){
-						printf(" ");
+						fprintf(flow, " ");
 					}
 				}
 			}
-			printf("|\n");
+			fprintf(flow, "|\n");
 			for(int i = 0; i < table->width; i++){
-				printf("+");
+				fprintf(flow, "+");
 				for(int j = 0; j < table->cellWidth[i]; j++){
-					printf("-");
+					fprintf(flow, "-");
 				}
 			}
-			printf("+\n");
+			fprintf(flow, "+\n");
 			for(int i = 1; i < table->lenght; i++){
 				for(int j = 0; j < table->width; j++){
 					tableCell = GetCellValue(table, i, j);
 					if(tableCell == NULL){
-						printf("|");
+						fprintf(flow, "|");
 						for(int k = 0; k < table->cellWidth[j]; k++)
-							printf(" ");
+							fprintf(flow, " ");
 					}
 					else{
-						printf("|%s", tableCell->value);
+						fprintf(flow, "|%s", tableCell->value);
 						for(int k = 0; k < table->cellWidth[j] - tableCell->lenght; k++){
-							printf(" ");
+							fprintf(flow, " ");
 						}
 					}
 				}
-				printf("|\n");
+				fprintf(flow, "|\n");
 				tableLine = tableLine->next;
 			}
 			for(int i = 0; i < table->width; i++){
-				printf("+");
+				fprintf(flow, "+");
 				for(int j = 0; j < table->cellWidth[i]; j++){
-					printf("-");
+					fprintf(flow, "-");
 				}
 			}
-			printf("+\n");
+			fprintf(flow, "+\n");
 		}
 		else{
 			for(int i = 0; i < table->lenght; i++){
 				for(int j = 0; j < table->width; j++){
 					tableCell = GetCellValue(table, i, j);
 					if(tableCell == NULL){
-						printf("[");
+						fprintf(flow, "[");
 						for(int k = 0; k < table->cellWidth[j]; k++)
-							printf(" ");
-						printf("] ");
+							fprintf(flow, " ");
+						fprintf(flow, "] ");
 					}
 					else{
-						printf("[%s", tableCell->value);
+						fprintf(flow, "[%s", tableCell->value);
 						for(int k = 0; k < table->cellWidth[j] - tableCell->lenght; k++){
-							printf(" ");
+							fprintf(flow, " ");
 						}
-						printf("] ");
+						fprintf(flow, "] ");
 					}
 				}
-				printf("\n");
+				fprintf(flow, "\n");
 				tableLine = tableLine->next;
 			}
 		}
@@ -756,13 +756,15 @@ void LogTable(char *fileName, tableType table){
 		fprintf(file, "table width : %d\n", table->width);
 		fprintf(file, "table line lengths :\n");
 		for(int i = 0; i < table->lenght; i++){
-			fprintf(file, "+--[%d] : %d\n", i, tableLine->lenght);
+			fprintf(file, "\t+--[%d] : %d\n", i, tableLine->lenght);
 			tableLine = tableLine->next;
 		}
 		fprintf(file, "table cell widths :\n");
 		for(int i = 0; i < table->width; i++){
-			fprintf(file, "+--[%d] : %d\n", i, table->cellWidth[i]);
+			fprintf(file, "\t+--[%d] : %d\n", i, table->cellWidth[i]);
 		}
+		fprintf(file, "\nresult :\n\n");
+		PrintTable(table, file);
 	}
 	fclose(file);
 }
@@ -772,7 +774,7 @@ void LogData(char *fileName, char data[25][25]){
 		exit(1);
 	}
 	for(int i = 0; strcmp(data[i], "__END__") != 0; i++){
-		fprintf(file, "+--[%d] : %s\n", i, data[i]);
+		fprintf(file, "\t+--[%d] : %s\n", i, data[i]);
 	}
 	fclose(file);
 }

@@ -19,12 +19,16 @@ typedef struct command{
 command NewCommand();
 int IsEmptyCommand(command commandList);
 command PushBackCommand(command commandList, char *commandInput);
+command ToRename(command commandList, char *value);
 command CleanCommand(command commandList);
 command ClearCommand(command commandList);
 void PrintCommand(command commandList);
 command InputCommand();
 commandElement* PullFrontCommand(command commandList);
+commandElement* GetCommandElement(command commandList, int index);
 void ClearCommandElement(commandElement *node);
+
+command CopyCommand(command commandList);
 
 void LogList(char *fileName, command commandList);
 

@@ -57,6 +57,26 @@ command PushBackCommand(command commandList, char *commandInput){
 	return commandList;
 }
 
+command ToRename(command commandList, char *value){
+	commandElement *node = malloc(sizeof(commandElement));
+
+	strcpy(node->value, value);
+	if(commandList->lenght == 0){
+		commandList->begin = node;
+		commandList->end = node;
+		commandList->lenght = 1;
+	}
+	else{
+		commandList->end->next = node;
+		node->back = commandList->end;
+		node->next = NULL;
+		commandList->end = node;
+		commandList->lenght++;
+	}
+	
+	return commandList;
+}
+
 command CleanCommand(command commandList){
 	commandElement *buffer = NULL;
 	commandList->begin = NULL;
@@ -127,8 +147,35 @@ commandElement* PullFrontCommand(command commandList){
 	return node;
 }
 
+commandElement* GetCommandElement(command commandList, int index){
+	commandElement *node = NULL;
+	if(IsEmptyCommand(commandList) || commandList->lenght == 0 || commandList->lenght < index + 1){
+		node = NULL;
+	}
+	else{
+		node = commandList->begin;
+		for(int i = 0; i < index; i++){
+			node = node->next;
+		}
+	}
+	return node;
+}
+
 void ClearCommandElement(commandElement *node){
 	free(node);
+}
+
+command CopyCommand(command commandList){
+	command commandListCopy = malloc(sizeof(*commandList));
+	commandListCopy->begin = NULL;
+	commandListCopy->end = NULL;
+	commandListCopy->lenght = 0;
+
+	for(int i = 0; i < commandList->lenght; i++){
+		ToRename(commandListCopy, GetCommandElement(commandList, i)->value);
+	}
+
+	return commandListCopy;
 }
 
 void LogList(char *fileName, command commandList){

@@ -23,8 +23,11 @@ int main(void){
 	char strTimestamp[30] = "\0";
 	char logFileName[100] = "\0";
 	StdoutColorWhite();
+
+	char charBuffer[100] = "\0";
 	
 	command commandList = NewCommand();
+	command commandListCopy = NewCommand();
 	commandElement *node = NULL;
 
 	int iterator1 = 0;
@@ -62,6 +65,7 @@ int main(void){
 		*/
 
 		commandList = InputCommand();
+		commandListCopy = CopyCommand(commandList);
 		system("clear");
 		PrintCommand(commandList);
 
@@ -260,13 +264,23 @@ int main(void){
 		}
 
 		if(debug){
-			LogList(logFileName, commandList);
+			LogList(logFileName, commandListCopy); // issue because commandList is void at this point
+			ClearCommand(commandListCopy);
 			/*action[25];             // Contains the action to do with the data
 			char fileName[100];
 			char tableName[25][25];      // Contains the name of the table taken by the command
 			char tableArguments[25][25]; // Contains all the arguments taken by the command
 			char tableValues[25][25];*/
-			LogString(logFileName, strcat("action : ", action)); // srtcat issue here gives segmentation fault
+			LogString(logFileName, strcat(strcat(charBuffer, "Action : "), action));
+			strcpy(charBuffer, "\0");
+			LogString(logFileName, strcat(strcat(charBuffer, "File name : "), fileName));
+			strcpy(charBuffer, "\0");
+			LogString(logFileName, strcat(strcat(charBuffer, "Table name : "), tableName[0]));
+			strcpy(charBuffer, "\0");
+			LogString(logFileName, "Arguments : ");
+			LogData(logFileName, tableArguments);
+			LogString(logFileName, "Values : ");
+			LogData(logFileName, tableValues);
 		}
 
 		commandList = ClearCommand(commandList);
@@ -287,7 +301,7 @@ int main(void){
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
 				tableBuffer = tablesBrut;
 				table = tableBuffer;
-				PrintTable(table);
+				PrintTable(table, stdout); //
 			}
 			else{
 				tableBuffer = GetTable(tablesBrut, tableName);
@@ -297,7 +311,7 @@ int main(void){
 				else{
 					if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
 						table = tableBuffer;
-						PrintTable(table);
+						PrintTable(table, stdout); //
 					}
 					else{
 						table = GetAssortedTable(tableBuffer, tableArguments);
@@ -305,13 +319,15 @@ int main(void){
 							printf("Error table arguments\n");
 						}
 						else{
-							PrintTable(table);
+							PrintTable(table, stdout); //
 						}
 					}
 				}
 			}
-			if(debug)
-				ToPrint(action, tableName, tableArguments, table);
+			if(debug){
+				// ToPrint(action, tableName, tableArguments, table);
+				LogTable(logFileName, table);
+			}
 		}
 		else if(strcmp(action, "create") == 0){
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
