@@ -20,7 +20,7 @@
 
 #define LOG_ACCESS "./log/"
 
-int main(void){
+int main(int argc, char *argv[]){
 	short runProgram = 1;
 	struct timespec timestamp;
 	struct tm *timestampStruct = NULL;
@@ -50,7 +50,8 @@ int main(void){
 	tableType tableBuffer = NewTable(); // The table that get the unsorted selected data from the file
 	tableType table = NewTable();       // The table that get the selected data from the file
 
-	PrintStart();
+	if(argc == 1)
+		PrintStart();
 
 	while(runProgram){
 		strcpy(tableName[0], "__ALLTABLES__");
@@ -67,7 +68,17 @@ int main(void){
 		Get all the parameters to run the program
 		*/
 
-		commandList = InputCommand();
+		if(argc > 1){
+			for(int i = 1; i < argc; i++){
+				commandList = ToRename(commandList, argv[i]);
+			}
+			runProgram = 0;
+			noPrint = 1;
+		}
+		else{
+			commandList = InputCommand();
+		}
+
 		commandListCopy = CopyCommand(commandList);
 
 		timespec_get(&timestamp, TIME_UTC);

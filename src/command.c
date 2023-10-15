@@ -61,18 +61,25 @@ command ToRename(command commandList, char *value){
 	commandElement *node = malloc(sizeof(commandElement));
 
 	strcpy(node->value, value);
-	if(commandList->lenght == 0){
+	if(IsEmptyCommand(commandList)){
+		commandList = malloc(sizeof(*commandList));
+
+		commandList->lenght = 0;
 		commandList->begin = node;
 		commandList->end = node;
-		commandList->lenght = 1;
+	}
+	else if(commandList->lenght == 0){
+		commandList->lenght = 0;
+		commandList->begin = node;
+		commandList->end = node;
 	}
 	else{
 		commandList->end->next = node;
 		node->back = commandList->end;
 		node->next = NULL;
 		commandList->end = node;
-		commandList->lenght++;
 	}
+	commandList->lenght++;
 	
 	return commandList;
 }
