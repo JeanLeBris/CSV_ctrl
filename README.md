@@ -16,32 +16,44 @@ All you have to do to install this program is to :
 
 Make sure to put the csv files you want to read in the doc folder in the main directory (may be changed in future versions)
 
-print : Permet d'afficher les tableaux
+### print : Print a table
 
-        -file or -f [nom du fichier] : Argument permettant d'entrer le nom du fichier dont nous afficherons les données ou un tableau
+print [--input | -i] [input file]
+	Print a full csv file
 
-        -table or -t [nom du tableau] : Argument permettant d'entrer le nom du tableau dont nous afficherons le contenu
-        -table -all : Argument permettant d'entrer le nom du tableau dont nous afficherons le contenu
+print [--input | -i] [input file] [--table | -t] [--all | table name]
+	Print all the tables from a csv file or a single table
 
-        -arguments or -args or -a [argument1, argument2, ...] : Argument permettant d'entrer les arguments dont nous afficherons le contenu
-        -arguments -all : Argument permettant de choisir d'afficher tous les arguments du tableau
+print [--input | -i] [input file] [--table | -t] [table name] [--arguments | --args | -a] [--all | column1, column2, ...]
+	Print all the columns from a table of a csv file or print only the selected columns
 
-        -debug or -d : Argument permettant de choisir d'afficher les informations complémentaires du tableau
+print [parameters] [--debug | -d]
+	Print additional informations about the selected table
 
-create : Permet de créer un tableau ou un fichier
+print [parameters] [--noprint | -np] 
+	Disable the printing in the terminal
 
-        -file or -f [nom du fichier] : Argument permettant d'entrer le nom du fichier que nous créerons
+print [parameters] [--log | -l]
+	Enable the save of the process in the log files
 
-        -table or -t [nom du tableau] : Argument permettant d'entrer le nom du tableau que nous créerons
+### create : Permet de créer un tableau ou un fichier
 
-        -arguments or -args or -a [nom des colonnes] : Argument permettant d'entrer le(s) nom(s) des colonnes que nous créerons
+create [--input | -i] [input file]
+	Create a new csv file
 
-        -values or -vals or -v [nom des éléments] : Argument permettant d'entrer le(s) contenu(s) de la ligne que nous créerons
+create [--input | -i] [input file] [--table | -t] [table name]
+	Create a new table in the csv file
 
-modify : Permet de modifier un tableau
+create [--input | -i] [input file] [--table | -t] [table name] [--arguments | --args | -a] [column1, column2, ...]
+	Create new columns in the selected table from the csv file
 
-quit : Permet de quitter le programme
+create [--input | -i] [input file] [--table | -t] [table name] [--arguments | --args | -a] [column1, column2, ...] [--values | --vals | -v] [value1, value2, ...]
+	Create a new line in the selected table from the csv file, attributing each value to its column
 
-help : Permet d'ouvrir l'aide du programme
+### modify : Modify a table
+
+quit : Exit the program
+
+help : Open the help
 
 For more informations on how to use the program, please read fics/help.txt

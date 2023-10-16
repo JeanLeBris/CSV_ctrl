@@ -112,7 +112,7 @@ int main(int argc, char *argv[]){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "--file") == 0 || strcmp(node->value, "-f") == 0){
+					if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
 						controlVar = FILE_BIT;
 					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
@@ -211,7 +211,7 @@ int main(int argc, char *argv[]){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "--file") == 0 || strcmp(node->value, "-f") == 0){
+					if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
 						controlVar = FILE_BIT;
 					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){

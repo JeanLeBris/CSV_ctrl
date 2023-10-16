@@ -813,10 +813,13 @@ tableType GetFileData(tableType table, char *fileName){
 tableType CreateFileTable(tableType table, char tableName[25][25]){
 	char tableNameBuffer[29];
 	tableLineType tableLine = NewTableLine();
-	strcpy(tableNameBuffer, "\0");
-	strcat(strcat(strcat(tableNameBuffer, "__"), tableName[0]), "__\0");
-	tableLine = PushBackTableLine(tableLine, tableNameBuffer);
-	table = PushBackTable(table, &tableLine);
+	for(int i = 0; strcmp(tableName[i], "__END__") != 0; i++){
+		strcpy(tableNameBuffer, "\0");
+		tableLine = NewTableLine();
+		strcat(strcat(strcat(tableNameBuffer, "__"), tableName[i]), "__\0");
+		tableLine = PushBackTableLine(tableLine, tableNameBuffer);
+		table = PushBackTable(table, &tableLine);
+	}
 	return table;
 }
 void SetFileData(tableType table, char *fileName){
@@ -856,11 +859,23 @@ void SetFileData(tableType table, char *fileName){
 	fclose(fic);
 }
 tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]){
-	tableLineType tableLine = tableBuffer->begin;
+	tableLineType tableLine = NULL;
+	if(tableBuffer->begin == NULL){
+		tableLine = malloc(sizeof(*tableLine));
+		tableBuffer->begin = tableLine;
+		tableBuffer->end = tableLine;
+	}
+	else{
+		tableLine = tableBuffer->begin;
+	}
 	
 	for(int i = 0; strcmp(tableArguments[i], "__END__") != 0; i++){
 		tableLine = PushBackTableLine(tableLine, tableArguments[i]);
 	}
+
+	GetTableLenght(tableBuffer);
+	GetTableWidth(tableBuffer);
+	GetTableCellWidth(tableBuffer);
 
 	return tableBuffer;
 }
