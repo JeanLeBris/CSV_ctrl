@@ -1,10 +1,12 @@
-exe:bin/CSV_Controller.exe
+# exe:bin/CSV_ctrl.exe
 
-bin/CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o bin CSV_Controller.exe
-	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o bin/CSV_Controller.exe
+exe:CSV_ctrl.exe
 
-CSV_Controller.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o log
-	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o CSV_Controller.exe
+# bin/CSV_ctrl.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o bin log CSV_ctrl.exe
+# 	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o bin/CSV_ctrl.exe
+
+CSV_ctrl.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o log
+	gcc -Wall obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o -o CSV_ctrl.exe
 
 obj/main.o:src/main.c obj
 	gcc -Wall -c src/main.c -o obj/main.o
@@ -18,8 +20,8 @@ obj/command.o:src/command.c lib/command.h obj
 obj/stdout_color.o:src/stdout_color.c lib/stdout_color.h obj
 	gcc -Wall -c src/stdout_color.c -o obj/stdout_color.o
 
-bin:
-	mkdir bin
+# bin:
+# 	mkdir bin
 
 obj:
 	mkdir obj
@@ -59,11 +61,11 @@ clean:
 	rmdir obj
 	rm dobj/*.o
 	rmdir dobj
-	rm bin/*.exe
+#	rm bin/*.exe
 	rm *.exe
-	rmdir bin
-	rm log/*.log
-	rmdir log
+#	rmdir bin
+#	rm log/*.log
+#	rmdir log
 
 zip:
-	zip "CSV_Controller.zip" src/*.c lib/*.h makefile
+	zip "CSV_ctrl.zip" src/*.c lib/*.h fics/*.txt README.md makefile
