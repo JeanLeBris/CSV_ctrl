@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include "../lib/command.h"
-#include "../lib/declarations.h"
+#include "../lib/fonctions.h"
 #include "../lib/stdout_color.h"
 
 #define VAL_BIT (1<<0)

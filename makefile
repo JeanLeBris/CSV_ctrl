@@ -11,7 +11,7 @@ CSV_ctrl.exe:obj/main.o obj/fonctions.o obj/command.o obj/stdout_color.o log
 obj/main.o:src/main.c obj
 	gcc -Wall -c src/main.c -o obj/main.o
 
-obj/fonctions.o:src/fonctions.c lib/declarations.h obj
+obj/fonctions.o:src/fonctions.c lib/fonctions.h obj
 	gcc -Wall -c src/fonctions.c -o obj/fonctions.o
 
 obj/command.o:src/command.c lib/command.h obj
@@ -39,7 +39,7 @@ debug.exe:dobj/main.o dobj/fonctions.o dobj/command.o dobj/stdout_color.o log
 dobj/main.o:src/main.c dobj
 	gcc -g -Wall -c src/main.c -o dobj/main.o
 
-dobj/fonctions.o:src/fonctions.c lib/declarations.h dobj
+dobj/fonctions.o:src/fonctions.c lib/fonctions.h dobj
 	gcc -g -Wall -c src/fonctions.c -o dobj/fonctions.o
 
 dobj/command.o:src/command.c lib/command.h dobj

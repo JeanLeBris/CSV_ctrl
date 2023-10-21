@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lib/declarations.h"
+#include "../lib/fonctions.h"
 #include "../lib/stdout_color.h"
 
 #define FILE_ACCESS "./doc/"
