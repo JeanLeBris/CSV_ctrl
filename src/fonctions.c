@@ -132,12 +132,20 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 		tableLine->lenght++;
 	}
 
-	while(tableLine->end->lenght == 0 /*|| tableLine->end->lenght == 1*/){
+	while(tableLine->end->lenght == 0 /*|| tableLine->end->lenght == 1*/ && tableLine->lenght > 1){
 		node = tableLine->end;
 		tableLine->end = tableLine->end->back;
 		tableLine->end->next = NULL;
 		tableLine->lenght--;
 		ClearTableCell(node);
+	}
+	if(tableLine->end->lenght == 0 && tableLine->lenght == 1){
+		ClearTableCell(tableLine->begin);
+		tableLine->begin = NULL;
+		tableLine->end = NULL;
+		tableLine->lenght --;
+		ClearTableLine(tableLine);
+		tableLine = NULL;
 	}
 
 	return tableLine;
@@ -210,20 +218,23 @@ tableType PushBackTable(tableType table, tableLineType* tableLine){
 		table->width = 0;
 		table->cellWidth = NULL;
 	}
-	if(IsEmptyTable(table)){
+	else if(IsEmptyTable(table)){
 		table->begin = *tableLine;
 		table->end = *tableLine;
 		table->lenght = 0;
 		table->width = 0;
 		table->cellWidth = NULL;
 	}
-	else{
+	else if(*tableLine != NULL){
 		table->end->next = *tableLine;
 		(*tableLine)->back = table->end;
 		table->end = *tableLine;
 	}
-	table->lenght++;
-	*tableLine = NULL;
+
+	if(*tableLine != NULL){
+		table->lenght++;
+		*tableLine = NULL;
+	}
 
 	return table;
 }
@@ -820,6 +831,10 @@ tableType CreateFileTable(tableType table, char tableName[25][25]){
 		tableLine = PushBackTableLine(tableLine, tableNameBuffer);
 		table = PushBackTable(table, &tableLine);
 	}
+
+	GetTableWidth(table);
+	GetTableCellWidth(table);
+
 	return table;
 }
 void SetFileData(tableType table, char *fileName){
