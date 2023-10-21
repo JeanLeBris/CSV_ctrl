@@ -1,3 +1,5 @@
+#include "../lib/stdout_color.h"
+
 #ifndef __FUNCTIONS__
 
 #define __FUNCTIONS__
@@ -84,11 +86,6 @@ void PrintError();
 void PrintHelp();
 void PrintStart();
 
-// Log
-
-void LogString(char *fileName, char *string);
-void LogTable(char *fileName, tableType table);
-void LogData(char *fileName, char data[25][25]);
 
 
 

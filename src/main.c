@@ -3,8 +3,9 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+#include "../lib/log.h"
+#include "../lib/table.h"
 #include "../lib/command.h"
-#include "../lib/fonctions.h"
 #include "../lib/stdout_color.h"
 
 #define VAL_BIT (1<<0)

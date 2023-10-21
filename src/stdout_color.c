@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../lib/stdout_color.h"
 
 void StdoutColorBlack(void){
     printf("\033[0;30m");
