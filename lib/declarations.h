@@ -51,7 +51,7 @@ int IsEmptyTable(tableType table);
 
 tableLineType PushBackTableLine(tableLineType tableLine, char *value);
 tableLineType PushBackTableLineBis(tableLineType tableLine, char *value);
-tableType PushBackTable(tableType table, tableLineType* tableLine);
+tableType PushBackTable(tableType table, tableLineType tableLine);
 
 // Pull
 

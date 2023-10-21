@@ -208,32 +208,31 @@ tableLineType PushBackTableLineBis(tableLineType tableLine, char *line){
 
 	return tableLine;
 }
-tableType PushBackTable(tableType table, tableLineType* tableLine){
+tableType PushBackTable(tableType table, tableLineType tableLine){
 	if(IsNullTable(table)){
 		table = malloc(sizeof(*table));
 
-		table->begin = *tableLine;
-		table->end = *tableLine;
+		table->begin = tableLine;
+		table->end = tableLine;
 		table->lenght = 0;
 		table->width = 0;
 		table->cellWidth = NULL;
 	}
 	else if(IsEmptyTable(table)){
-		table->begin = *tableLine;
-		table->end = *tableLine;
+		table->begin = tableLine;
+		table->end = tableLine;
 		table->lenght = 0;
 		table->width = 0;
 		table->cellWidth = NULL;
 	}
-	else if(*tableLine != NULL){
-		table->end->next = *tableLine;
-		(*tableLine)->back = table->end;
-		table->end = *tableLine;
+	else if(tableLine != NULL){
+		table->end->next = tableLine;
+		tableLine->back = table->end;
+		table->end = tableLine;
 	}
 
-	if(*tableLine != NULL){
+	if(tableLine != NULL){
 		table->lenght++;
-		*tableLine = NULL;
 	}
 
 	return table;
@@ -809,8 +808,9 @@ tableType GetFileData(tableType table, char *fileName){
 	while(!feof(fic)){
 		fgets(fileLineBrut, 500, fic);
 		if(strcmp(fileLineBuffer, fileLineBrut) != 0){
+			tableLine = NewTableLine();
 			tableLine = PushBackTableLine(tableLine, fileLineBrut);
-			table = PushBackTable(table, &tableLine);
+			table = PushBackTable(table, tableLine);
 			strcpy(fileLineBuffer, fileLineBrut);
 		}
 	}
@@ -829,7 +829,7 @@ tableType CreateFileTable(tableType table, char tableName[25][25]){
 		tableLine = NewTableLine();
 		strcat(strcat(strcat(tableNameBuffer, "__"), tableName[i]), "__\0");
 		tableLine = PushBackTableLine(tableLine, tableNameBuffer);
-		table = PushBackTable(table, &tableLine);
+		table = PushBackTable(table, tableLine);
 	}
 
 	GetTableWidth(table);
@@ -924,13 +924,13 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25]
 		strcat(tempString, ";");
 	}
 
-	tableLineType tableLine;
+	tableLineType tableLine = NewTableLine();
 
 	tableLine = PushBackTableLineBis(tableLine, tempString);
 
 	free(tempString);
 
-	tableBuffer = PushBackTable(tableBuffer, &tableLine);
+	tableBuffer = PushBackTable(tableBuffer, tableLine);
 
 	for(int i = 0; i < tableSize; i++){
 		strcpy(GetCellValue(tableBuffer, tableBuffer->lenght - 1, tableIndexes[i])->value, tableValues[i]);
@@ -947,7 +947,7 @@ tableType SetTable(tableType tables, tableType tableBuffer){
 	strcpy(tableNameBuffer, "\0");
 	strcat(strcat(strcat(tableNameBuffer, "__"), tableBuffer->name), "__\0");
 	tableLine = PushBackTableLine(tableLine, tableNameBuffer);
-	tables = PushBackTable(tables, &tableLine);
+	tables = PushBackTable(tables, tableLine);
 	tables->end->next = tableBuffer->begin;
 	tableBuffer->begin->back = tables->end;
 	tables->end = tableBuffer->end;
