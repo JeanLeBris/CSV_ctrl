@@ -30,6 +30,4 @@ void ClearCommandElement(commandElement *node);
 
 command CopyCommand(command commandList);
 
-void LogList(char *fileName, command commandList);
-
 #endif
