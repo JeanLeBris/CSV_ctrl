@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
 
 		if(argc > 1){
 			for(int i = 1; i < argc; i++){
-				commandList = ToRename(commandList, argv[i]);
+				commandList = PushBackCommand(commandList, argv[i]);
 			}
 			runProgram = 0;
 			noPrint = 1;

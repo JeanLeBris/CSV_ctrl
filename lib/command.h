@@ -18,8 +18,8 @@ typedef struct command{
 
 command NewCommand();
 int IsEmptyCommand(command commandList);
-command PushBackCommand(command commandList, char *commandInput);
-command ToRename(command commandList, char *value);
+command PushBackCommand(command commandList, char *value);
+command PushBackCommandByMultiple(command commandList, char *commandInput);
 command CleanCommand(command commandList);
 command ClearCommand(command commandList);
 void PrintCommand(command commandList);

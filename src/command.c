@@ -16,7 +16,34 @@ int IsEmptyCommand(command commandList){
 		return 0;
 }
 
-command PushBackCommand(command commandList, char *commandInput){
+command PushBackCommand(command commandList, char *value){
+	commandElement *node = malloc(sizeof(commandElement));
+
+	strcpy(node->value, value);
+	if(IsEmptyCommand(commandList)){
+		commandList = malloc(sizeof(*commandList));
+
+		commandList->lenght = 0;
+		commandList->begin = node;
+		commandList->end = node;
+	}
+	else if(commandList->lenght == 0){
+		commandList->lenght = 0;
+		commandList->begin = node;
+		commandList->end = node;
+	}
+	else{
+		commandList->end->next = node;
+		node->back = commandList->end;
+		node->next = NULL;
+		commandList->end = node;
+	}
+	commandList->lenght++;
+	
+	return commandList;
+}
+
+command PushBackCommandByMultiple(command commandList, char *commandInput){
 	int i = 0;
 	while(commandInput[i] != '\0'){
 		commandElement *node = malloc(sizeof(commandElement));
@@ -54,33 +81,6 @@ command PushBackCommand(command commandList, char *commandInput){
 		commandList->lenght++;
 	}
 
-	return commandList;
-}
-
-command ToRename(command commandList, char *value){
-	commandElement *node = malloc(sizeof(commandElement));
-
-	strcpy(node->value, value);
-	if(IsEmptyCommand(commandList)){
-		commandList = malloc(sizeof(*commandList));
-
-		commandList->lenght = 0;
-		commandList->begin = node;
-		commandList->end = node;
-	}
-	else if(commandList->lenght == 0){
-		commandList->lenght = 0;
-		commandList->begin = node;
-		commandList->end = node;
-	}
-	else{
-		commandList->end->next = node;
-		node->back = commandList->end;
-		node->next = NULL;
-		commandList->end = node;
-	}
-	commandList->lenght++;
-	
 	return commandList;
 }
 
@@ -128,7 +128,7 @@ command InputCommand(){
 	printf("\n>>> ");
 	fgets(entry, COMMAND_CHAR_SIZE, stdin);
 	entry[strlen(entry) - 1] = '\0';
-	commandList = PushBackCommand(commandList, entry);
+	commandList = PushBackCommandByMultiple(commandList, entry);
 
 	return commandList;
 }
@@ -179,7 +179,7 @@ command CopyCommand(command commandList){
 	commandListCopy->lenght = 0;
 
 	for(int i = 0; i < commandList->lenght; i++){
-		ToRename(commandListCopy, GetCommandElement(commandList, i)->value);
+		PushBackCommand(commandListCopy, GetCommandElement(commandList, i)->value);
 	}
 
 	return commandListCopy;
