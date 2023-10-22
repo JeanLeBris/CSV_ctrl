@@ -75,9 +75,6 @@ int IsEmptyTable(tableType table){
 
 // Push
 
-/*
-// TODO Fixing this function by dividing it in 2, one to make the line, and the other to reduce it
-*/
 tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 	int i = 0;
 	int j = 0;
@@ -131,6 +128,13 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 		tableLine->lenght++;
 	}
 
+	return tableLine;
+}
+tableLineType PushBackTableLineCleaned(tableLineType tableLine, char *line){
+	tableCellType *node = NULL;
+
+	tableLine = PushBackTableLine(tableLine, line);
+
 	while(tableLine->end->lenght == 0 /*|| tableLine->end->lenght == 1*/ && tableLine->lenght > 1){
 		node = tableLine->end;
 		tableLine->end = tableLine->end->back;
@@ -145,64 +149,6 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 		tableLine->lenght --;
 		ClearTableLine(tableLine);
 		tableLine = NULL;
-	}
-
-	return tableLine;
-}
-/*
-// TODO Deleting this because it makes no sense
-*/
-tableLineType PushBackTableLineBis(tableLineType tableLine, char *line){
-	int i = 0;
-	int j = 0;
-	tableCellType *node = NULL;
-
-	while(line[i] != '\0'){
-		node = malloc(sizeof(tableCellType));
-
-		node->back = NULL;
-		node->next = NULL;
-		node->lenght = 0;
-		j = 0;
-		
-		while(line[i] != ';' && line[i] != '\n' && line[i] != '\0'){
-			if(line[i] < 32);
-			else{
-				node->value[j] = line[i];
-				node->lenght++;
-				j++;
-			}
-			i++;
-		}
-
-		node->value[j] = '\0';
-		if(line[i] != '\0'){
-			i++;
-		}
-
-		if(IsNullTableLine(tableLine)){
-			tableLine = malloc(sizeof(*tableLine));
-
-			tableLine->lenght = 0;
-			tableLine->begin = node;
-			tableLine->end = node;
-			tableLine->back = NULL;
-			tableLine->next = NULL;
-		}
-		else if(IsEmptyTableLine(tableLine)){
-			tableLine->lenght = 0;
-			tableLine->begin = node;
-			tableLine->end = node;
-			tableLine->back = NULL;
-			tableLine->next = NULL;
-		}
-		else{
-			tableLine->end->next = node;
-			node->back = tableLine->end;
-			tableLine->end = node;
-		}
-
-		tableLine->lenght++;
 	}
 
 	return tableLine;
@@ -763,7 +709,7 @@ tableType GetFileData(tableType table, char *fileName){
 		fgets(fileLineBrut, 500, fic);
 		if(strcmp(fileLineBuffer, fileLineBrut) != 0){
 			tableLine = NewTableLine();
-			tableLine = PushBackTableLine(tableLine, fileLineBrut);
+			tableLine = PushBackTableLineCleaned(tableLine, fileLineBrut);
 			table = PushBackTable(table, tableLine);
 			strcpy(fileLineBuffer, fileLineBrut);
 		}
@@ -782,7 +728,7 @@ tableType CreateFileTable(tableType table, char tableName[25][25]){
 		strcpy(tableNameBuffer, "\0");
 		tableLine = NewTableLine();
 		strcat(strcat(strcat(tableNameBuffer, "__"), tableName[i]), "__\0");
-		tableLine = PushBackTableLine(tableLine, tableNameBuffer);
+		tableLine = PushBackTableLineCleaned(tableLine, tableNameBuffer);
 		table = PushBackTable(table, tableLine);
 	}
 
@@ -839,7 +785,7 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][2
 	}
 	
 	for(int i = 0; strcmp(tableArguments[i], "__END__") != 0; i++){
-		tableLine = PushBackTableLine(tableLine, tableArguments[i]);
+		tableLine = PushBackTableLineCleaned(tableLine, tableArguments[i]);
 	}
 
 	GetTableLenght(tableBuffer);
@@ -881,7 +827,7 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25]
 
 	tableLineType tableLine = NewTableLine();
 
-	tableLine = PushBackTableLineBis(tableLine, tempString);
+	tableLine = PushBackTableLine(tableLine, tempString);
 
 	free(tempString);
 
@@ -901,7 +847,7 @@ tableType SetTable(tableType tables, tableType tableBuffer){
 
 	strcpy(tableNameBuffer, "\0");
 	strcat(strcat(strcat(tableNameBuffer, "__"), tableBuffer->name), "__\0");
-	tableLine = PushBackTableLine(tableLine, tableNameBuffer);
+	tableLine = PushBackTableLineCleaned(tableLine, tableNameBuffer);
 	tables = PushBackTable(tables, tableLine);
 	tables->end->next = tableBuffer->begin;
 	tableBuffer->begin->back = tables->end;

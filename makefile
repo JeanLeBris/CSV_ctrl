@@ -5,8 +5,8 @@ exe:CSV_ctrl.exe
 # bin/CSV_ctrl.exe:obj/main.o obj/table.o obj/command.o obj/stdout_color.o bin log CSV_ctrl.exe
 # 	gcc -Wall obj/main.o obj/table.o obj/command.o obj/stdout_color.o -o bin/CSV_ctrl.exe
 
-CSV_ctrl.exe:obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o obj/output.o log
-	gcc -Wall obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o obj/output.o -o CSV_ctrl.exe
+CSV_ctrl.exe:obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o log
+	gcc -Wall obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o -o CSV_ctrl.exe
 
 obj/main.o:src/main.c obj
 	gcc -Wall -c src/main.c -o obj/main.o
@@ -22,9 +22,6 @@ obj/log.o:src/log.c lib/log.h obj
 
 obj/stdout_color.o:src/stdout_color.c lib/stdout_color.h obj
 	gcc -Wall -c src/stdout_color.c -o obj/stdout_color.o
-
-obj/output.o:src/output.c lib/output.h obj
-	gcc -Wall -c src/output.c -o obj/output.o
 
 # bin:
 # 	mkdir bin
@@ -56,9 +53,6 @@ dobj/log.o:src/log.c lib/log.h dobj
 
 dobj/stdout_color.o:src/stdout_color.c lib/stdout_color.h dobj
 	gcc -g -Wall -c src/stdout_color.c -o dobj/stdout_color.o
-
-dobj/output.o:src/output.c lib/output.h dobj
-	gcc -g -Wall -c src/output.c -o dobj/output.o
 
 dobj:
 	mkdir dobj
