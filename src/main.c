@@ -90,11 +90,7 @@ int main(int argc, char *argv[]){
 		strcpy(logFileName, "\0");
 		strcat(strcat(strcat(strcat(logFileName, LOG_ACCESS), "log_"), strTimestamp), ".log");
 
-		#if defined(__linux__)
-		system("clear");
-		#elif defined(_WIN32) || defined(_WIN64)
-		system("cls");
-		#endif
+		ClearTerminal();
 
 		PrintCommand(commandList);
 

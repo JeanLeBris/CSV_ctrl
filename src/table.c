@@ -673,20 +673,50 @@ void PrintHelp(){
 	fclose(fic);
 }
 void PrintStart(){
-	char line[1000];
+	// char line[1000];
 
-	FILE *fic = fopen("fics/start.txt", "r");
-	if(fic == NULL){
-		exit(1);
-	}
-	fseek(fic, 0, SEEK_SET);
-	system("clear");
-	while(!feof(fic)){
-		fgets(line, 500, fic);
-		printf("%s", line);
-	}
+	// FILE *fic = fopen("fics/start.txt", "r");
+	// if(fic == NULL){
+	// 	exit(1);
+	// }
+	// fseek(fic, 0, SEEK_SET);
+	// ClearTerminal();
+	// while(!feof(fic)){
+	// 	fgets(line, 500, fic);
+	// 	printf("%s", line);
+	// }
+	// printf("\n");
+	// fclose(fic);
+
+	ClearTerminal();
+
+	StdoutColorGreen();
+	printf("                 888888888888888888888888888888888888888888888888888888888\n");
+	printf("                888888888888888888888888888888888888888888888888888888888\n");
+	printf("               8888                                                 8888\n");
+	printf("              8888      "); StdoutColorBlue(); printf("CCCCCCC       "); StdoutColorWhite(); printf("SSSSSS   "); StdoutColorRed(); printf("VVV         VVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("             8888     "); StdoutColorBlue(); printf("CCCC    CCC   "); StdoutColorWhite(); printf("SS      SS  "); StdoutColorRed(); printf("VVV       VVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("            8888     "); StdoutColorBlue(); printf("CCC            "); StdoutColorWhite(); printf("SS           "); StdoutColorRed(); printf("VVV     VVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("           8888      "); StdoutColorBlue(); printf("CCC              "); StdoutColorWhite(); printf("SSSSSS      "); StdoutColorRed(); printf("VVV   VVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("          8888       "); StdoutColorBlue(); printf("CCC                    "); StdoutColorWhite(); printf("SS     "); StdoutColorRed(); printf("VVV VVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("         8888         "); StdoutColorBlue(); printf("CCCC    CCC   "); StdoutColorWhite(); printf("SS      SS      "); StdoutColorRed(); printf("VVVVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("        8888            "); StdoutColorBlue(); printf("CCCCCCC       "); StdoutColorWhite(); printf("SSSSSS         "); StdoutColorRed(); printf("VVV     "); StdoutColorGreen(); printf("8888\n");
+	printf("       8888                                                 8888\n");
+	printf("      888888888888888888888888888888888888888888888888888888888\n");
+	printf("     888888888888888888888888888888888888888888888888888888888\n");
+	StdoutColorReset();
 	printf("\n");
-	fclose(fic);
+	printf("Project - CSV_ctrl\n");
+	printf("Version 00\n");
+	printf("\n");
+	printf("Author : Jean Le Bris\n");
+}
+void ClearTerminal(){
+	#if defined(__linux__)
+	system("clear");
+	#elif defined(_WIN32) || defined(_WIN64)
+	system("cls");
+	#endif
 }
 
 

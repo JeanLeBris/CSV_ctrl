@@ -85,6 +85,7 @@ void ToPrint(char action[25], char tableName[25][25], char tableArguments[25][25
 void PrintError();
 void PrintHelp();
 void PrintStart();
+void ClearTerminal();
 
 
 
