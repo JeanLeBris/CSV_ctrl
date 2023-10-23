@@ -135,14 +135,14 @@ tableLineType PushBackTableLineCleaned(tableLineType tableLine, char *line){
 
 	tableLine = PushBackTableLine(tableLine, line);
 
-	while(tableLine->end->lenght == 0 /*|| tableLine->end->lenght == 1*/ && tableLine->lenght > 1){
+	while(tableLine != NULL && tableLine->end->lenght == 0 /*|| tableLine->end->lenght == 1*/ && tableLine->lenght > 1){
 		node = tableLine->end;
 		tableLine->end = tableLine->end->back;
 		tableLine->end->next = NULL;
 		tableLine->lenght--;
 		ClearTableCell(node);
 	}
-	if(tableLine->end->lenght == 0 && tableLine->lenght == 1){
+	if(tableLine != NULL && tableLine->end->lenght == 0 && tableLine->lenght == 1){
 		ClearTableCell(tableLine->begin);
 		tableLine->begin = NULL;
 		tableLine->end = NULL;
@@ -696,8 +696,8 @@ void PrintStart(){
 
 tableType GetFileData(tableType table, char *fileName){
 	tableLineType tableLine = NewTableLine();
-	char fileLineBrut[500];
-	char fileLineBuffer[500];
+	char fileLineBrut[500] = "\0";
+	char fileLineBuffer[500] = "\t"; // default value that should not be found in the file
 	char srcFileName[100] = "\0";
 	strcat(strcat(srcFileName, FILE_ACCESS), fileName);
 	FILE *fic = fopen(srcFileName, "r");
