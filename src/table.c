@@ -807,6 +807,11 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][2
 	tableLineType tableLine = NULL;
 	if(tableBuffer->begin == NULL){
 		tableLine = malloc(sizeof(*tableLine));
+		tableLine->lenght = 0;
+		tableLine->begin = NULL;
+		tableLine->end = NULL;
+		tableLine->back = NULL;
+		tableLine->next = NULL;
 		tableBuffer->begin = tableLine;
 		tableBuffer->end = tableLine;
 	}
