@@ -5,7 +5,7 @@ exe:CSV_ctrl.exe
 # bin/CSV_ctrl.exe:obj/main.o obj/table.o obj/command.o obj/stdout_color.o bin log CSV_ctrl.exe
 # 	gcc -Wall obj/main.o obj/table.o obj/command.o obj/stdout_color.o -o bin/CSV_ctrl.exe
 
-CSV_ctrl.exe:obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o log
+CSV_ctrl.exe:obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o log obj dobj doc
 	gcc -Wall obj/main.o obj/table.o obj/command.o obj/log.o obj/stdout_color.o -o CSV_ctrl.exe
 
 obj/main.o:src/main.c obj
@@ -26,17 +26,23 @@ obj/stdout_color.o:src/stdout_color.c lib/stdout_color.h obj
 # bin:
 # 	mkdir bin
 
+log:
+	mkdir log
+
 obj:
 	mkdir obj
 
-log:
-	mkdir log
+dobj:
+	mkdir dobj
+
+doc:
+	mkdir doc
 
 
 
 debug:debug.exe
 
-debug.exe:dobj/main.o dobj/table.o dobj/command.o dobj/log.o dobj/stdout_color.o log
+debug.exe:dobj/main.o dobj/table.o dobj/command.o dobj/log.o dobj/stdout_color.o log obj dobj doc
 	gcc -g -Wall dobj/main.o dobj/table.o dobj/command.o dobj/log.o dobj/stdout_color.o -o debug.exe
 
 dobj/main.o:src/main.c dobj
@@ -54,24 +60,24 @@ dobj/log.o:src/log.c lib/log.h dobj
 dobj/stdout_color.o:src/stdout_color.c lib/stdout_color.h dobj
 	gcc -g -Wall -c src/stdout_color.c -o dobj/stdout_color.o
 
-dobj:
-	mkdir dobj
-
-log:
-	mkdir log
 
 
 
 clean:
-	rm obj/*.o
-	rmdir obj
-	rm dobj/*.o
-	rmdir dobj
+	rm -r obj
+	rm -r dobj
 #	rm bin/*.exe
-	rm *.exe
 #	rmdir bin
 #	rm log/*.log
 #	rmdir log
+
+
+clear:
+	rm -r obj
+	rm -r dobj
+	rm -r log
+	rm -r doc
+	rm *.exe
 
 zip:
 	zip "CSV_ctrl.zip" src/*.c lib/*.h fics/*.txt README.md makefile
