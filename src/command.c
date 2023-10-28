@@ -116,8 +116,6 @@ void PrintCommand(command commandList){
 		printf("%s ", node->value);
 		node = node->next;
 	}
-	printf("\n");
-	printf("size : %d", commandList->lenght);
 	printf("\n\n");
 }
 
