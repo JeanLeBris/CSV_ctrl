@@ -9,7 +9,7 @@
 #include "../lib/stdout_color.h"
 
 #define VAL_BIT (1<<0)
-#define ARG_BIT (1<<1)
+#define COL_BIT (1<<1)
 #define TAB_BIT (1<<2)
 #define INPUT_FILE_BIT (1<<3)
 #define OUTPUT_FILE_BIT (1<<4)
@@ -138,10 +138,10 @@ int main(int argc, char *argv[]){
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
 					}
-					else if(strcmp(node->value, "--arguments") == 0 || strcmp(node->value, "--args") == 0 || strcmp(node->value, "-a") == 0){
-						controlVar = ARG_BIT;
+					else if(strcmp(node->value, "--columns") == 0 || strcmp(node->value, "--cols") == 0 || strcmp(node->value, "-c") == 0){
+						controlVar = COL_BIT;
 					}
-					else if(strcmp(node->value, "--all") == 0){
+					else if(strcmp(node->value, "--all") == 0 || strcmp(node->value, "-a") == 0){
 						controlVar |= ALL_BIT;
 					}
 					else if(strcmp(node->value, "--debug") == 0 || strcmp(node->value, "-d") == 0){
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]){
 							strcpy(tableName[1], "__END__");
 							//controlVar = END_BIT;
 							break;
-						case ARG_BIT :
+						case COL_BIT :
 							iterator1 = 0;
 							while(tableArguments[iterator1][0] != '_' || tableArguments[iterator1][1] != '_'){
 								iterator1++;
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
 							strcpy(tableArguments[iterator1], node->value);
 							strcpy(tableArguments[iterator1 + 1], "__END__");
 							break;
-						case ARG_BIT | ALL_BIT :
+						case COL_BIT | ALL_BIT :
 							strcpy(tableArguments[0], "__ALLARGUMENTS__");
 							strcpy(tableArguments[1], "__END__");
 							//controlVar = END_BIT;
@@ -260,8 +260,8 @@ int main(int argc, char *argv[]){
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
 					}
-					else if(strcmp(node->value, "--arguments") == 0 || strcmp(node->value, "--args") == 0 || strcmp(node->value, "-a") == 0){
-						controlVar = ARG_BIT;
+					else if(strcmp(node->value, "--columns") == 0 || strcmp(node->value, "--cols") == 0 || strcmp(node->value, "-c") == 0){
+						controlVar = COL_BIT;
 					}
 					else if(strcmp(node->value, "--values") == 0 || strcmp(node->value, "--vals") == 0 || strcmp(node->value, "-v") == 0){
 						controlVar = VAL_BIT;
@@ -286,7 +286,7 @@ int main(int argc, char *argv[]){
 							strcpy(tableName[iterator1], node->value);
 							strcpy(tableName[iterator1 + 1], "__END__");
 							break;
-						case ARG_BIT :
+						case COL_BIT :
 							iterator1 = 0;
 							while(tableArguments[iterator1][0] != '_' || tableArguments[iterator1][1] != '_'){
 								iterator1++;

@@ -7,7 +7,7 @@
 #define GRAPHIC_MODE_BIT (1<<0)
 #define CSV_MODE_BIT (1<<1)
 
-#define FILE_ACCESS "./doc/"
+#define FILE_ACCESS "./"
 
 // Creation : Return NULL
 
