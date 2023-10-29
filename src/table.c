@@ -535,10 +535,10 @@ void GetTableCellWidth(tableType table){
 
 // Print
 
-void PrintTable(tableType table, FILE *flow){
+void PrintGraphicTable(tableType table, FILE *flow){
 	if(table != NULL){
 		tableLineType tableLine = table->begin;
-		tableCellType *tableCell = NULL;
+		tableCellType *tableCell = tableLine->begin;
 		fprintf(flow, "============================================================\n");
 		StdoutColorRed();
 		fprintf(flow, "%s\n", table->name);
@@ -554,8 +554,7 @@ void PrintTable(tableType table, FILE *flow){
 			}
 			fprintf(flow, "+\n");
 			for(int i = 0; i < table->width; i++){
-				tableCell = GetCellValue(table, 0, i);
-				if (tableCell == NULL){
+				if (tableCell == NULL){								// Impossible théoriquement
 					fprintf(flow, "|");
 					for (int j = 0; j < table->cellWidth[i]; j++)
 						fprintf(flow, " ");
@@ -569,6 +568,9 @@ void PrintTable(tableType table, FILE *flow){
 						fprintf(flow, " ");
 					}
 				}
+				if(tableCell != NULL){
+					tableCell = tableCell->next;
+				}
 			}
 			fprintf(flow, "|\n");
 			for(int i = 0; i < table->width; i++){
@@ -579,8 +581,9 @@ void PrintTable(tableType table, FILE *flow){
 			}
 			fprintf(flow, "+\n");
 			for(int i = 1; i < table->lenght; i++){
+				tableLine = tableLine->next;
+				tableCell = tableLine->begin;
 				for(int j = 0; j < table->width; j++){
-					tableCell = GetCellValue(table, i, j);
 					if(tableCell == NULL){
 						fprintf(flow, "|");
 						for(int k = 0; k < table->cellWidth[j]; k++)
@@ -592,9 +595,11 @@ void PrintTable(tableType table, FILE *flow){
 							fprintf(flow, " ");
 						}
 					}
+					if(tableCell != NULL){
+						tableCell = tableCell->next;
+					}
 				}
 				fprintf(flow, "|\n");
-				tableLine = tableLine->next;
 			}
 			for(int i = 0; i < table->width; i++){
 				fprintf(flow, "+");
@@ -605,9 +610,10 @@ void PrintTable(tableType table, FILE *flow){
 			fprintf(flow, "+\n");
 		}
 		else{
+			tableLine = table->begin;
 			for(int i = 0; i < table->lenght; i++){
+				tableCell = tableLine->begin;
 				for(int j = 0; j < table->width; j++){
-					tableCell = GetCellValue(table, i, j);
 					if(tableCell == NULL){
 						fprintf(flow, "[");
 						for(int k = 0; k < table->cellWidth[j]; k++)
@@ -621,10 +627,127 @@ void PrintTable(tableType table, FILE *flow){
 						}
 						fprintf(flow, "] ");
 					}
+					if(tableCell != NULL){
+						tableCell = tableCell->next;
+					}
 				}
 				fprintf(flow, "\n");
 				tableLine = tableLine->next;
 			}
+		}
+	}
+}
+// void PrintGraphicTable(tableType table, FILE *flow){
+// 	if(table != NULL){
+// 		tableLineType tableLine = table->begin;
+// 		tableCellType *tableCell = NULL;
+// 		fprintf(flow, "============================================================\n");
+// 		StdoutColorRed();
+// 		fprintf(flow, "%s\n", table->name);
+// 		StdoutColorReset();
+// 		fprintf(flow, "============================================================\n");
+// 		fprintf(flow, "\n");
+// 		if(strcmp(table->name, "__ALLTABLES__") != 0){
+// 			for(int i = 0; i < table->width; i++){
+// 				fprintf(flow, "+");
+// 				for(int j = 0; j < table->cellWidth[i]; j++){
+// 					fprintf(flow, "-");
+// 				}
+// 			}
+// 			fprintf(flow, "+\n");
+// 			for(int i = 0; i < table->width; i++){
+// 				tableCell = GetCellValue(table, 0, i);
+// 				if (tableCell == NULL){
+// 					fprintf(flow, "|");
+// 					for (int j = 0; j < table->cellWidth[i]; j++)
+// 						fprintf(flow, " ");
+// 				}
+// 				else{
+// 					fprintf(flow, "|");
+// 					StdoutColorBlue();
+// 					fprintf(flow, "%s", tableCell->value);
+// 					StdoutColorReset();
+// 					for (int j = 0; j < table->cellWidth[i] - tableCell->lenght; j++){
+// 						fprintf(flow, " ");
+// 					}
+// 				}
+// 			}
+// 			fprintf(flow, "|\n");
+// 			for(int i = 0; i < table->width; i++){
+// 				fprintf(flow, "+");
+// 				for(int j = 0; j < table->cellWidth[i]; j++){
+// 					fprintf(flow, "-");
+// 				}
+// 			}
+// 			fprintf(flow, "+\n");
+// 			for(int i = 1; i < table->lenght; i++){
+// 				for(int j = 0; j < table->width; j++){
+// 					tableCell = GetCellValue(table, i, j);
+// 					if(tableCell == NULL){
+// 						fprintf(flow, "|");
+// 						for(int k = 0; k < table->cellWidth[j]; k++)
+// 							fprintf(flow, " ");
+// 					}
+// 					else{
+// 						fprintf(flow, "|%s", tableCell->value);
+// 						for(int k = 0; k < table->cellWidth[j] - tableCell->lenght; k++){
+// 							fprintf(flow, " ");
+// 						}
+// 					}
+// 				}
+// 				fprintf(flow, "|\n");
+// 				tableLine = tableLine->next;
+// 			}
+// 			for(int i = 0; i < table->width; i++){
+// 				fprintf(flow, "+");
+// 				for(int j = 0; j < table->cellWidth[i]; j++){
+// 					fprintf(flow, "-");
+// 				}
+// 			}
+// 			fprintf(flow, "+\n");
+// 		}
+// 		else{
+// 			for(int i = 0; i < table->lenght; i++){
+// 				for(int j = 0; j < table->width; j++){
+// 					tableCell = GetCellValue(table, i, j);
+// 					if(tableCell == NULL){
+// 						fprintf(flow, "[");
+// 						for(int k = 0; k < table->cellWidth[j]; k++)
+// 							fprintf(flow, " ");
+// 						fprintf(flow, "] ");
+// 					}
+// 					else{
+// 						fprintf(flow, "[%s", tableCell->value);
+// 						for(int k = 0; k < table->cellWidth[j] - tableCell->lenght; k++){
+// 							fprintf(flow, " ");
+// 						}
+// 						fprintf(flow, "] ");
+// 					}
+// 				}
+// 				fprintf(flow, "\n");
+// 				tableLine = tableLine->next;
+// 			}
+// 		}
+// 	}
+// }
+void PrintCsvTable(tableType table, FILE *flow){
+	if(table != NULL){
+		tableLineType tableLine = table->begin;
+		tableCellType *tableCell = tableLine->begin;
+		for(int i = 0; i < table->lenght; i++){
+			tableCell = tableLine->begin;
+			for(int j = 0; j < table->width; j++){
+				if(tableCell != NULL){
+					fprintf(flow, "%s", tableCell->value);
+				}
+				fprintf(flow, ";");
+				if(tableCell != NULL){
+					tableCell = tableCell->next;
+				}
+			}
+			fseek(flow, -1, SEEK_CUR);
+			fprintf(flow, "\n");
+			tableLine = tableLine->next;
 		}
 	}
 }
@@ -732,7 +855,7 @@ tableType GetFileData(tableType table, char *fileName){
 	strcat(strcat(srcFileName, FILE_ACCESS), fileName);
 	FILE *fic = fopen(srcFileName, "r");
 	if(fic == NULL){
-		exit(1);
+		return NULL;
 	}
 	fseek(fic, 0, SEEK_SET);
 	while(!feof(fic)){

@@ -18,6 +18,10 @@
 #define DEBUG_BIT (1<<7)
 #define NOPRINT_BIT (1<<8)
 #define LOG_BIT (1<<9)
+#define MODE_BIT (1<<10)
+
+#define GRAPHIC_MODE_BIT (1<<0)
+#define CSV_MODE_BIT (1<<1)
 
 #define LOG_ACCESS "./log/"
 
@@ -46,6 +50,7 @@ int main(int argc, char *argv[]){
 	char noPrint = 0;
 	char log = 0;
 	unsigned int controlVar = 0;
+	char outputModeVar = 0;
 
 	tableType tablesBrut = NewTable();  // The table that get all the file's data as value
 	tableType tableBuffer = NewTable(); // The table that get the unsorted selected data from the file
@@ -65,6 +70,9 @@ int main(int argc, char *argv[]){
 		noPrint = 0;
 		log = 0;
 
+		controlVar = 0;
+		outputModeVar = 0;
+
 		/*
 		Get all the parameters to run the program
 		*/
@@ -74,7 +82,7 @@ int main(int argc, char *argv[]){
 				commandList = PushBackCommand(commandList, argv[i]);
 			}
 			runProgram = 0;
-			noPrint = 1;
+			// noPrint = 1;
 		}
 		else{
 			commandList = InputCommand();
@@ -109,7 +117,10 @@ int main(int argc, char *argv[]){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
+					if(strcmp(node->value, "--output_mode") == 0 || strcmp(node->value, "-om") == 0){
+						controlVar = MODE_BIT;
+					}
+					else if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
 						controlVar = FILE_BIT;
 					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
@@ -124,7 +135,7 @@ int main(int argc, char *argv[]){
 					else if(strcmp(node->value, "--debug") == 0 || strcmp(node->value, "-d") == 0){
 						controlVar = DEBUG_BIT;
 					}
-					else if(strcmp(node->value, "--noprint") == 0 || strcmp(node->value, "-np") == 0){
+					else if(strcmp(node->value, "--no_print") == 0 || strcmp(node->value, "-np") == 0){
 						controlVar = NOPRINT_BIT;
 					}
 					else if(strcmp(node->value, "--log") == 0 || strcmp(node->value, "-l") == 0){
@@ -136,6 +147,14 @@ int main(int argc, char *argv[]){
 				}
 				else{
 					switch(controlVar){
+						case MODE_BIT :
+							if(strcmp(node->value, "graphic") == 0){
+								outputModeVar = GRAPHIC_MODE_BIT;
+							}
+							else if(strcmp(node->value, "csv") == 0){
+								outputModeVar = CSV_MODE_BIT;
+							}
+							break;
 						case FILE_BIT :
 							strcpy(fileName, node->value);
 							break;
@@ -341,42 +360,54 @@ int main(int argc, char *argv[]){
 		}
 		else if(strcmp(action, "print") == 0){
 			tablesBrut = GetFileData(tablesBrut, fileName);
-			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
-				tableBuffer = tablesBrut;
-				table = tableBuffer;
-				if(noPrint == false)
-					PrintTable(table, stdout); //
-				if(log){
-					LogTable(logFileName, table);
+			if(tablesBrut != NULL){
+				if(strcmp(tableName[0], "__ALLTABLES__") == 0){
+					tableBuffer = tablesBrut;
+					table = tableBuffer; //
 				}
-			}
-			else{
-				tableBuffer = GetTable(tablesBrut, tableName);
-				if(tableBuffer != NULL){
-					if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
-						table = tableBuffer;
-						if(noPrint == false)
-							PrintTable(table, stdout); //
-						if(log){
-							LogTable(logFileName, table);
+				else{
+					tableBuffer = GetTable(tablesBrut, tableName);
+					if(tableBuffer != NULL){
+						if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
+							table = tableBuffer; //
+						}
+						else{
+							table = GetAssortedTable(tableBuffer, tableArguments); // FIX the issue of segmentation fault when a column does not exist
+							if(table != NULL){
+								//
+							}
+							else{
+								noPrint = 1;
+								printf("Error table arguments\n");
+							}
 						}
 					}
 					else{
-						table = GetAssortedTable(tableBuffer, tableArguments);
-						if(table != NULL){
-							if(noPrint == false)
-								PrintTable(table, stdout); //
-							if(log){
-								LogTable(logFileName, table);
-							}
-						}
-						else{
-							printf("Error table arguments\n");
-						}
+						noPrint = 1;
+						printf("Error table name\n");
 					}
 				}
-				else{
-					printf("Error table name\n");
+			}
+			else{
+				noPrint = 1;
+				printf("Error input file name\n");
+			}
+			if(table != NULL){
+				if(noPrint == false){
+					switch(outputModeVar){
+						case GRAPHIC_MODE_BIT :
+							PrintGraphicTable(table, stdout);
+							break;
+						case CSV_MODE_BIT :
+							PrintCsvTable(table, stdout);
+							break;
+						default :
+							PrintGraphicTable(table, stdout);
+							break;
+					}
+				}
+				if(log){
+					LogTable(logFileName, table, outputModeVar);
 				}
 			}
 			if(debug){

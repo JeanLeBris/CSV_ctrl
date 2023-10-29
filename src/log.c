@@ -3,6 +3,9 @@
 #include <string.h>
 #include "../lib/log.h"
 
+#define GRAPHIC_MODE_BIT (1<<0)
+#define CSV_MODE_BIT (1<<1)
+
 void LogList(char *fileName, command commandList){
 	commandElement *node = commandList->begin;
 	FILE *file = fopen(fileName,"a");
@@ -30,7 +33,7 @@ void LogString(char *fileName, char *string){
 	fclose(file);
 }
 
-void LogTable(char *fileName, tableType table){
+void LogTable(char *fileName, tableType table, char outputModeVar){
 	tableLineType tableLine = table->begin;
 	FILE *file = fopen(fileName,"a");
 	if(file==NULL){
@@ -50,7 +53,17 @@ void LogTable(char *fileName, tableType table){
 			fprintf(file, "\t+--[%d] : %d\n", i, table->cellWidth[i]);
 		}
 		fprintf(file, "\nresult :\n\n");
-		PrintTable(table, file);
+
+		switch(outputModeVar){
+			case GRAPHIC_MODE_BIT :
+				PrintGraphicTable(table, file);
+				break;
+			case CSV_MODE_BIT :
+				PrintCsvTable(table, file);
+				break;
+			default :
+				break;
+		}
 	}
 	fclose(file);
 }

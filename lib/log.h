@@ -8,7 +8,7 @@
 void LogList(char *fileName, command commandList);
 
 void LogString(char *fileName, char *string);
-void LogTable(char *fileName, tableType table);
+void LogTable(char *fileName, tableType table, char outputModeVar);
 void LogData(char *fileName, char data[25][25]);
 
 #endif
