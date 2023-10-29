@@ -94,7 +94,7 @@ void ClearTerminal();
 
 tableType GetFileData(tableType table, char *fileName);
 tableType CreateFileTable(tableType table, char tableName[25][25]);
-void SetFileData(tableType table, char *fileName);
+void SetFileData(tableType table, char *fileName, char outputModeVar);
 tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]);
 tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25], char tableValues[25][25], int tableSize);
 tableType SetTable(tableType tables, tableType tableBuffer);

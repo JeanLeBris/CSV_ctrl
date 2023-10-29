@@ -11,14 +11,15 @@
 #define VAL_BIT (1<<0)
 #define ARG_BIT (1<<1)
 #define TAB_BIT (1<<2)
-#define FILE_BIT (1<<3)
-#define ALL_BIT (1<<4)
-#define ERROR_BIT (1<<5)
-#define END_BIT (1<<6)
-#define DEBUG_BIT (1<<7)
-#define NOPRINT_BIT (1<<8)
-#define LOG_BIT (1<<9)
-#define MODE_BIT (1<<10)
+#define INPUT_FILE_BIT (1<<3)
+#define OUTPUT_FILE_BIT (1<<4)
+#define ALL_BIT (1<<5)
+#define ERROR_BIT (1<<6)
+#define END_BIT (1<<7)
+#define DEBUG_BIT (1<<8)
+#define NOPRINT_BIT (1<<9)
+#define LOG_BIT (1<<10)
+#define MODE_BIT (1<<11)
 
 #define GRAPHIC_MODE_BIT (1<<0)
 #define CSV_MODE_BIT (1<<1)
@@ -42,7 +43,8 @@ int main(int argc, char *argv[]){
 	int iterator1 = 0;
 	int iterator2 = 0;
 	char action[25];             // Contains the action to do with the data
-	char fileName[100];
+	char inputFileName[100];
+	char outputFileName[100];
 	char tableName[25][25];      // Contains the name of the table taken by the command
 	char tableArguments[25][25]; // Contains all the arguments taken by the command
 	char tableValues[25][25];
@@ -66,6 +68,8 @@ int main(int argc, char *argv[]){
 		strcpy(tableArguments[1], "__END__");
 		strcpy(tableValues[0], "__ALLVALUES__");
 		strcpy(tableValues[1], "__END__");
+		strcpy(inputFileName, "\0");
+		strcpy(outputFileName, "\0");
 		debug = 0;
 		noPrint = 0;
 		log = 0;
@@ -98,9 +102,10 @@ int main(int argc, char *argv[]){
 		strcpy(logFileName, "\0");
 		strcat(strcat(strcat(strcat(logFileName, LOG_ACCESS), "log_"), strTimestamp), ".log");
 
-		ClearTerminal();
-
-		PrintCommand(commandList);
+		// if(noPrint == false){
+		// 	ClearTerminal();
+		// 	PrintCommand(commandList);
+		// }
 
 		node = PullFrontCommand(commandList);
 		if(node == NULL){
@@ -121,7 +126,10 @@ int main(int argc, char *argv[]){
 						controlVar = MODE_BIT;
 					}
 					else if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
-						controlVar = FILE_BIT;
+						controlVar = INPUT_FILE_BIT;
+					}
+					else if(strcmp(node->value, "--output") == 0 || strcmp(node->value, "-o") == 0){
+						controlVar = OUTPUT_FILE_BIT;
 					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
@@ -155,8 +163,11 @@ int main(int argc, char *argv[]){
 								outputModeVar = CSV_MODE_BIT;
 							}
 							break;
-						case FILE_BIT :
-							strcpy(fileName, node->value);
+						case INPUT_FILE_BIT :
+							strcpy(inputFileName, node->value);
+							break;
+						case OUTPUT_FILE_BIT :
+							strcpy(outputFileName, node->value);
 							break;
 						case TAB_BIT :
 							iterator1 = 0;
@@ -228,7 +239,7 @@ int main(int argc, char *argv[]){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
 					if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
-						controlVar = FILE_BIT;
+						controlVar = INPUT_FILE_BIT;
 					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
@@ -254,8 +265,8 @@ int main(int argc, char *argv[]){
 				}
 				else{
 					switch(controlVar){
-						case FILE_BIT :
-							strcpy(fileName, node->value);
+						case INPUT_FILE_BIT :
+							strcpy(inputFileName, node->value);
 							break;
 						case TAB_BIT :
 							iterator1 = 0;
@@ -325,17 +336,22 @@ int main(int argc, char *argv[]){
 			free(node);
 		}
 
+		if(noPrint == false){
+			ClearTerminal();
+			PrintCommand(commandListCopy);
+		}
+
 		if(log){
 			LogList(logFileName, commandListCopy); // issue because commandList is void at this point
 			ClearCommand(commandListCopy);
 			/*action[25];             // Contains the action to do with the data
-			char fileName[100];
+			char inputFileName[100];
 			char tableName[25][25];      // Contains the name of the table taken by the command
 			char tableArguments[25][25]; // Contains all the arguments taken by the command
 			char tableValues[25][25];*/
 			LogString(logFileName, strcat(strcat(charBuffer, "Action : "), action));
 			strcpy(charBuffer, "\0");
-			LogString(logFileName, strcat(strcat(charBuffer, "File name : "), fileName));
+			LogString(logFileName, strcat(strcat(charBuffer, "Input file name : "), inputFileName));
 			strcpy(charBuffer, "\0");
 			LogString(logFileName, strcat(strcat(charBuffer, "Table name : "), tableName[0]));
 			strcpy(charBuffer, "\0");
@@ -359,7 +375,7 @@ int main(int argc, char *argv[]){
 			PrintHelp();
 		}
 		else if(strcmp(action, "print") == 0){
-			tablesBrut = GetFileData(tablesBrut, fileName);
+			tablesBrut = GetFileData(tablesBrut, inputFileName);
 			if(tablesBrut != NULL){
 				if(strcmp(tableName[0], "__ALLTABLES__") == 0){
 					tableBuffer = tablesBrut;
@@ -406,6 +422,9 @@ int main(int argc, char *argv[]){
 							break;
 					}
 				}
+				if(strcmp(outputFileName, "\0") != 0){
+					SetFileData(table, outputFileName, outputModeVar);
+				}
 				if(log){
 					LogTable(logFileName, table, outputModeVar);
 				}
@@ -416,19 +435,19 @@ int main(int argc, char *argv[]){
 		}
 		else if(strcmp(action, "create") == 0){
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
-				tablesBrut = CreateFileData(fileName);
+				tablesBrut = CreateFileData(inputFileName);
 			}
 			else if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
-				tablesBrut = GetFileData(tablesBrut, fileName);
+				tablesBrut = GetFileData(tablesBrut, inputFileName);
 				tablesBrut = CreateFileTable(tablesBrut, tableName);
-				SetFileData(tablesBrut, fileName);
+				SetFileData(tablesBrut, inputFileName, outputModeVar);
 			}
 			else if(strcmp(tableValues[0], "__ALLVALUES__") == 0){
-				tablesBrut = GetFileData(tablesBrut, fileName);
+				tablesBrut = GetFileData(tablesBrut, inputFileName);
 				tableBuffer = GetTable(tablesBrut, tableName);
 				tableBuffer = CreateFileTableColumn(tableBuffer, tableArguments);
 				tablesBrut = SetTable(tablesBrut, tableBuffer);
-				SetFileData(tablesBrut, fileName);
+				SetFileData(tablesBrut, inputFileName, outputModeVar);
 			}
 			else{
 				iterator1 = 0;
@@ -443,11 +462,11 @@ int main(int argc, char *argv[]){
 					PrintError();
 				}
 				else{
-					tablesBrut = GetFileData(tablesBrut, fileName);
+					tablesBrut = GetFileData(tablesBrut, inputFileName);
 					tableBuffer = GetTable(tablesBrut, tableName);
 					tableBuffer = CreateFileTableLine(tableBuffer, tableArguments, tableValues, iterator1);
 					tablesBrut = SetTable(tablesBrut, tableBuffer);
-					SetFileData(tablesBrut, fileName);
+					SetFileData(tablesBrut, inputFileName, outputModeVar);
 				}
 			}
 		}

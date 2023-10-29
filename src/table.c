@@ -3,6 +3,9 @@
 #include <string.h>
 #include "../lib/table.h"
 
+#define GRAPHIC_MODE_BIT (1<<0)
+#define CSV_MODE_BIT (1<<1)
+
 #define FILE_ACCESS "./doc/"
 
 // Creation : Return NULL
@@ -537,8 +540,8 @@ void GetTableCellWidth(tableType table){
 
 void PrintGraphicTable(tableType table, FILE *flow){
 	if(table != NULL){
-		tableLineType tableLine = table->begin;
-		tableCellType *tableCell = tableLine->begin;
+		tableLineType tableLine = NULL;
+		tableCellType *tableCell = NULL;
 		fprintf(flow, "============================================================\n");
 		StdoutColorRed();
 		fprintf(flow, "%s\n", table->name);
@@ -553,6 +556,10 @@ void PrintGraphicTable(tableType table, FILE *flow){
 				}
 			}
 			fprintf(flow, "+\n");
+			tableLine = table->begin;
+			if(tableLine != NULL){
+				tableCell = tableLine->begin;
+			}
 			for(int i = 0; i < table->width; i++){
 				if (tableCell == NULL){								// Impossible théoriquement
 					fprintf(flow, "|");
@@ -733,19 +740,31 @@ void PrintGraphicTable(tableType table, FILE *flow){
 void PrintCsvTable(tableType table, FILE *flow){
 	if(table != NULL){
 		tableLineType tableLine = table->begin;
-		tableCellType *tableCell = tableLine->begin;
+		tableCellType *tableCell = NULL;
+		if(tableLine != NULL){
+			tableCell = tableLine->begin;
+		}
+		if(strcmp(table->name, "__ALLTABLES__") != 0){
+			fprintf(flow, "__%s__", table->name);
+			for(int i = 0; i < table->width - 1; i++){
+				fprintf(flow, ";");
+			}
+			fprintf(flow, "\n");
+		}
 		for(int i = 0; i < table->lenght; i++){
 			tableCell = tableLine->begin;
 			for(int j = 0; j < table->width; j++){
 				if(tableCell != NULL){
 					fprintf(flow, "%s", tableCell->value);
 				}
-				fprintf(flow, ";");
+				if(j != table->width - 1){
+					fprintf(flow, ";");
+				}
 				if(tableCell != NULL){
 					tableCell = tableCell->next;
 				}
 			}
-			fseek(flow, -1, SEEK_CUR);
+			// fseek(flow, -1, SEEK_CUR);
 			fprintf(flow, "\n");
 			tableLine = tableLine->next;
 		}
@@ -890,42 +909,62 @@ tableType CreateFileTable(tableType table, char tableName[25][25]){
 
 	return table;
 }
-void SetFileData(tableType table, char *fileName){
-	tableLineType tableLine = NewTableLine();
-	tableCellType *tableCell = NULL;
+void SetFileData(tableType table, char *fileName, char outputModeVar){
 	char srcFileName[100] = "\0";
 	strcat(strcat(srcFileName, FILE_ACCESS), fileName);
 	FILE *fic = fopen(srcFileName, "w");
 	if(fic == NULL){
 		exit(1);
 	}
-	tableLine = table->begin;
-	tableCell = tableLine->begin;
-	for(int i = 0; i < table->lenght; i++){
-		for(int j = 0; j < table->width; j++){
-			if(tableCell != NULL){
-				fprintf(fic, "%s", tableCell->value);
-				tableCell = tableCell->next;
-			}
-			else{
-
-			}
-
-			if(j != table->width - 1){
-				fprintf(fic, ";");
-			}
-			else{
-
-			}
-		}
-		fprintf(fic, "\n");
-		tableLine = tableLine->next;
-		if(tableLine != NULL){
-			tableCell = tableLine->begin;
-		}
+	switch(outputModeVar){
+		case GRAPHIC_MODE_BIT :
+			PrintGraphicTable(table, fic);
+			break;
+		case CSV_MODE_BIT :
+			PrintCsvTable(table, fic);
+			break;
+		default :
+			PrintCsvTable(table, fic);
+			break;
 	}
 	fclose(fic);
 }
+// void SetFileData(tableType table, char *fileName){
+// 	tableLineType tableLine = NewTableLine();
+// 	tableCellType *tableCell = NULL;
+// 	char srcFileName[100] = "\0";
+// 	strcat(strcat(srcFileName, FILE_ACCESS), fileName);
+// 	FILE *fic = fopen(srcFileName, "w");
+// 	if(fic == NULL){
+// 		exit(1);
+// 	}
+// 	tableLine = table->begin;
+// 	tableCell = tableLine->begin;
+// 	for(int i = 0; i < table->lenght; i++){
+// 		for(int j = 0; j < table->width; j++){
+// 			if(tableCell != NULL){
+// 				fprintf(fic, "%s", tableCell->value);
+// 				tableCell = tableCell->next;
+// 			}
+// 			else{
+
+// 			}
+
+// 			if(j != table->width - 1){
+// 				fprintf(fic, ";");
+// 			}
+// 			else{
+
+// 			}
+// 		}
+// 		fprintf(fic, "\n");
+// 		tableLine = tableLine->next;
+// 		if(tableLine != NULL){
+// 			tableCell = tableLine->begin;
+// 		}
+// 	}
+// 	fclose(fic);
+// }
 tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]){
 	tableLineType tableLine = NULL;
 	if(tableBuffer->begin == NULL){
