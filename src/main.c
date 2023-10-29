@@ -17,9 +17,10 @@
 #define ERROR_BIT (1<<6)
 #define END_BIT (1<<7)
 #define DEBUG_BIT (1<<8)
-#define NOPRINT_BIT (1<<9)
-#define LOG_BIT (1<<10)
-#define MODE_BIT (1<<11)
+#define NO_PRINT_BIT (1<<9)
+#define NO_COMMAND_PRINT_BIT (1<<10)
+#define LOG_BIT (1<<11)
+#define MODE_BIT (1<<12)
 
 #define GRAPHIC_MODE_BIT (1<<0)
 #define CSV_MODE_BIT (1<<1)
@@ -50,8 +51,9 @@ int main(int argc, char *argv[]){
 	char tableValues[25][25];
 	char debug = 0;
 	char noPrint = 0;
+	char noCommandPrint = 0;
 	char log = 0;
-	unsigned int controlVar = 0;
+	unsigned long controlVar = 0;
 	char outputModeVar = 0;
 
 	tableType tablesBrut = NewTable();  // The table that get all the file's data as value
@@ -72,6 +74,7 @@ int main(int argc, char *argv[]){
 		strcpy(outputFileName, "\0");
 		debug = 0;
 		noPrint = 0;
+		noCommandPrint = 0;
 		log = 0;
 
 		controlVar = 0;
@@ -86,7 +89,6 @@ int main(int argc, char *argv[]){
 				commandList = PushBackCommand(commandList, argv[i]);
 			}
 			runProgram = 0;
-			// noPrint = 1;
 		}
 		else{
 			commandList = InputCommand();
@@ -144,7 +146,10 @@ int main(int argc, char *argv[]){
 						controlVar = DEBUG_BIT;
 					}
 					else if(strcmp(node->value, "--no_print") == 0 || strcmp(node->value, "-np") == 0){
-						controlVar = NOPRINT_BIT;
+						controlVar = NO_PRINT_BIT;
+					}
+					else if(strcmp(node->value, "--no_command_print") == 0 || strcmp(node->value, "-ncp") == 0){
+						controlVar = NO_COMMAND_PRINT_BIT;
 					}
 					else if(strcmp(node->value, "--log") == 0 || strcmp(node->value, "-l") == 0){
 						controlVar = LOG_BIT;
@@ -219,8 +224,11 @@ int main(int argc, char *argv[]){
 				if(controlVar == LOG_BIT){
 					log = 1;
 				}
-				if(controlVar == NOPRINT_BIT){
+				if(controlVar == NO_PRINT_BIT){
 					noPrint = 1;
+				}
+				if(controlVar == NO_COMMAND_PRINT_BIT){
+					noCommandPrint = 1;
 				}
 				if(controlVar == ERROR_BIT){
 					PrintError();
@@ -252,12 +260,6 @@ int main(int argc, char *argv[]){
 					}
 					else if(strcmp(node->value, "--debug") == 0 || strcmp(node->value, "-d") == 0){
 						controlVar = DEBUG_BIT;
-					}
-					else if(strcmp(node->value, "--noprint") == 0 || strcmp(node->value, "-np") == 0){
-						controlVar = NOPRINT_BIT;
-					}
-					else if(strcmp(node->value, "--log") == 0 || strcmp(node->value, "-l") == 0){
-						controlVar = NOPRINT_BIT;
 					}
 					else{
 						controlVar = ERROR_BIT;
@@ -311,7 +313,7 @@ int main(int argc, char *argv[]){
 				free(node);
 				if(controlVar == DEBUG_BIT){
 					debug = 1;
-					controlVar = END_BIT;
+					// controlVar = END_BIT;
 				}
 				if(controlVar == ERROR_BIT){
 					PrintError();
@@ -336,7 +338,7 @@ int main(int argc, char *argv[]){
 			free(node);
 		}
 
-		if(noPrint == false){
+		if(noPrint == false && noCommandPrint == false){
 			ClearTerminal();
 			PrintCommand(commandListCopy);
 		}
@@ -514,7 +516,7 @@ int main(int argc, char *argv[]){
 			}
 		}
 	}
-	system("clear");
+	// ClearTerminal();
 
 	return 0;
 }
