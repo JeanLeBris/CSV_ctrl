@@ -19,8 +19,9 @@
 #define DEBUG_BIT (1<<8)
 #define NO_PRINT_BIT (1<<9)
 #define NO_COMMAND_PRINT_BIT (1<<10)
-#define LOG_BIT (1<<11)
-#define MODE_BIT (1<<12)
+#define NO_COLOR_BIT (1<<11)
+#define LOG_BIT (1<<12)
+#define MODE_BIT (1<<13)
 
 #define GRAPHIC_MODE_BIT (1<<0)
 #define CSV_MODE_BIT (1<<1)
@@ -33,7 +34,6 @@ int main(int argc, char *argv[]){
 	struct tm *timestampStruct = NULL;
 	char strTimestamp[40] = "\0";
 	char logFileName[100] = "\0";
-	StdoutColorWhite();
 
 	char charBuffer[100] = "\0";
 	
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]){
 	char noPrint = 0;
 	char noCommandPrint = 0;
 	char log = 0;
+	char noColor = 0;
 	unsigned long controlVar = 0;
 	char outputModeVar = 0;
 
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]){
 		noPrint = 0;
 		noCommandPrint = 0;
 		log = 0;
+		noColor = 0;
 
 		controlVar = 0;
 		outputModeVar = 0;
@@ -150,6 +152,9 @@ int main(int argc, char *argv[]){
 					}
 					else if(strcmp(node->value, "--no_command_print") == 0 || strcmp(node->value, "-ncp") == 0){
 						controlVar = NO_COMMAND_PRINT_BIT;
+					}
+					else if(strcmp(node->value, "--no_color") == 0 || strcmp(node->value, "-nc") == 0){
+						controlVar = NO_COLOR_BIT;
 					}
 					else if(strcmp(node->value, "--log") == 0 || strcmp(node->value, "-l") == 0){
 						controlVar = LOG_BIT;
@@ -229,6 +234,9 @@ int main(int argc, char *argv[]){
 				}
 				if(controlVar == NO_COMMAND_PRINT_BIT){
 					noCommandPrint = 1;
+				}
+				if(controlVar == NO_COLOR_BIT){
+					noColor = 1;
 				}
 				if(controlVar == ERROR_BIT){
 					PrintError();
@@ -338,6 +346,9 @@ int main(int argc, char *argv[]){
 			free(node);
 		}
 
+		if(noColor == false){
+			StdoutColorWhite();
+		}
 		if(noPrint == false && noCommandPrint == false){
 			ClearTerminal();
 			PrintCommand(commandListCopy);
@@ -414,13 +425,13 @@ int main(int argc, char *argv[]){
 				if(noPrint == false){
 					switch(outputModeVar){
 						case GRAPHIC_MODE_BIT :
-							PrintGraphicTable(table, stdout);
+							PrintGraphicTable(table, stdout, noColor);
 							break;
 						case CSV_MODE_BIT :
 							PrintCsvTable(table, stdout);
 							break;
 						default :
-							PrintGraphicTable(table, stdout);
+							PrintGraphicTable(table, stdout, noColor);
 							break;
 					}
 				}

@@ -56,12 +56,13 @@ void LogTable(char *fileName, tableType table, char outputModeVar){
 
 		switch(outputModeVar){
 			case GRAPHIC_MODE_BIT :
-				PrintGraphicTable(table, file);
+				PrintGraphicTable(table, file, 1);
 				break;
 			case CSV_MODE_BIT :
 				PrintCsvTable(table, file);
 				break;
 			default :
+				PrintGraphicTable(table, file, 1);
 				break;
 		}
 	}

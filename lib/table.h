@@ -80,7 +80,7 @@ void GetTableCellWidth(tableType table);
 
 // Print
 
-void PrintGraphicTable(tableType table, FILE *flow);
+void PrintGraphicTable(tableType table, FILE *flow, char noColor);
 void PrintCsvTable(tableType table, FILE *flow);
 void ToPrint(char action[25], char tableName[25][25], char tableArguments[25][25], tableType table);
 void PrintError();

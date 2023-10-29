@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "../lib/table.h"
 
 #define GRAPHIC_MODE_BIT (1<<0)
@@ -538,14 +539,18 @@ void GetTableCellWidth(tableType table){
 
 // Print
 
-void PrintGraphicTable(tableType table, FILE *flow){
+void PrintGraphicTable(tableType table, FILE *flow, char noColor){
 	if(table != NULL){
 		tableLineType tableLine = NULL;
 		tableCellType *tableCell = NULL;
 		fprintf(flow, "============================================================\n");
-		StdoutColorRed();
+		if(noColor == false){
+			StdoutColorRed();
+		}
 		fprintf(flow, "%s\n", table->name);
-		StdoutColorReset();
+		if(noColor == false){
+			StdoutColorReset();
+		}
 		fprintf(flow, "============================================================\n");
 		fprintf(flow, "\n");
 		if(strcmp(table->name, "__ALLTABLES__") != 0){
@@ -568,9 +573,13 @@ void PrintGraphicTable(tableType table, FILE *flow){
 				}
 				else{
 					fprintf(flow, "|");
-					StdoutColorBlue();
+					if(noColor == false){
+						StdoutColorBlue();
+					}
 					fprintf(flow, "%s", tableCell->value);
-					StdoutColorReset();
+					if(noColor == false){
+						StdoutColorReset();
+					}
 					for (int j = 0; j < table->cellWidth[i] - tableCell->lenght; j++){
 						fprintf(flow, " ");
 					}
@@ -918,7 +927,7 @@ void SetFileData(tableType table, char *fileName, char outputModeVar){
 	}
 	switch(outputModeVar){
 		case GRAPHIC_MODE_BIT :
-			PrintGraphicTable(table, fic);
+			PrintGraphicTable(table, fic, 1);
 			break;
 		case CSV_MODE_BIT :
 			PrintCsvTable(table, fic);
