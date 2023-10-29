@@ -3,19 +3,23 @@
 ## Explainations
 
 This repository is a small personal project to train in C programming
-This project was originally made for Windows, so it may not work on Linux and Mac distributions
+
+This project was originally made for Windows and Linux distributions, so it may have unexpected results on MacOS
+
+This project being a personal project, I update it on my free time, and a few bugs and issues may subsist
 
 ## How to install
 
 All you have to do to install this program is to :
   1. clone the project in a folder by running the 'git clone https://github.com/JeanLeBris/CSV_ctrl.git' command
-  2. launch the makefile by running the 'make exe' command to get the executable program or,
-     launch the makefile by running the 'make debug' command to get the debuggable program
+  2. run the makefile by running the 'make exe' command to get the executable program or,
+     run the makefile by running the 'make debug' command to get the debuggable program
   3. add the executable directory to the PATH to use the program more efficiently
 
 ## How to use it
 
-Make sure to put the csv files you want to read in the doc folder in the main directory (may be changed in future versions)
+Each of the following commands can be used as command line arguments when calling the program to do the same process by respecting the following syntax :
+	CSV_ctrl [command]
 
 ### print : Print a table
 
@@ -70,5 +74,3 @@ create [--input | -i] [input file] [--table | -t] [table name] [--columns | --co
 quit : Exit the program
 
 help : Open the help
-
-For more informations on how to use the program, please read fics/help.txt
