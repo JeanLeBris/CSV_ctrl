@@ -11,6 +11,7 @@ All you have to do to install this program is to :
   1. clone the project in a folder by running the 'git clone https://github.com/JeanLeBris/CSV_ctrl.git' command
   2. launch the makefile by running the 'make exe' command to get the executable program or,
      launch the makefile by running the 'make debug' command to get the debuggable program
+	3. add the executable directory to the PATH to use the program more efficiently
 
 ## How to use it
 
