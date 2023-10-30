@@ -413,7 +413,7 @@ tableType GetTable(tableType tables, char tableName[25][25]){
 
 	return tableBuffer;
 }
-tableType GetAssortedTable(tableType tableBuffer, char tableArguments[25][25]){
+tableType GetAssortedTable(tableType tableBuffer, char tableColumns[25][25]){
 	int nbArguments = 0;
 	int nbColumns = 0;
 	int iterator = 0;
@@ -427,11 +427,11 @@ tableType GetAssortedTable(tableType tableBuffer, char tableArguments[25][25]){
 		return tableBuffer;
 	}
 
-	if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){			// Initialises nbArguments, allowing to know the numbers of columns to be printed
+	if(strcmp(tableColumns[0], "__ALLCOLUMNS__") == 0){			// Initialises nbArguments, allowing to know the numbers of columns to be printed
 		nbArguments = 0;											//
 	}																//
 	else{															//
-		while(strcmp(tableArguments[nbArguments], "__END__") != 0){	//
+		while(strcmp(tableColumns[nbArguments], "__END__") != 0){	//
 			nbArguments++;											//
 		}															//
 	}																//
@@ -452,11 +452,11 @@ tableType GetAssortedTable(tableType tableBuffer, char tableArguments[25][25]){
 			tableLine = tableBuffer->begin;																// from the file
 			tableCell = tableLine->begin;																//
 			iterator = 0;																				// Initialises the table printColumn, allowing to know if a column is to be printed
-			while(strcmp(tableArguments[i], tableCell->value) != 0 && iterator < tableBuffer->width){	//
+			while(strcmp(tableColumns[i], tableCell->value) != 0 && iterator < tableBuffer->width){	//
 				tableCell = tableCell->next;															//
 				iterator++;																				//
 			}																							//
-			if(strcmp(tableArguments[i], tableCell->value) == 0){										//
+			if(strcmp(tableColumns[i], tableCell->value) == 0){										//
 				printColumn[i] = iterator;																//
 			}																							//
 		}																								//
@@ -779,15 +779,15 @@ void PrintCsvTable(tableType table, FILE *flow){
 		}
 	}
 }
-void ToPrint(char action[25], char tableName[25][25], char tableArguments[25][25], tableType table){
+void ToPrint(char action[25], char tableName[25][25], char tableColumns[25][25], tableType table){
 	tableLineType tableLine = table->begin;
 	//tableCellType *tableCell = tableLine->begin;
 
 	printf("\naction : %s\n", action);
 	printf("table : %s\n", tableName[0]);
 	printf("arguments : ");
-	for(int i = 0; strcmp(tableArguments[i], "__END__") != 0 && i < 25; i++){
-		printf("%s ", tableArguments[i]);
+	for(int i = 0; strcmp(tableColumns[i], "__END__") != 0 && i < 25; i++){
+		printf("%s ", tableColumns[i]);
 	}
 	printf("\n");
 	if(table != NULL){
@@ -974,7 +974,7 @@ void SetFileData(tableType table, char *fileName, char outputModeVar){
 // 	}
 // 	fclose(fic);
 // }
-tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]){
+tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25]){
 	tableLineType tableLine = NULL;
 	if(tableBuffer->begin == NULL){
 		tableLine = malloc(sizeof(*tableLine));
@@ -990,8 +990,8 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][2
 		tableLine = tableBuffer->begin;
 	}
 	
-	for(int i = 0; strcmp(tableArguments[i], "__END__") != 0; i++){
-		tableLine = PushBackTableLineCleaned(tableLine, tableArguments[i]);
+	for(int i = 0; strcmp(tableColumns[i], "__END__") != 0; i++){
+		tableLine = PushBackTableLineCleaned(tableLine, tableColumns[i]);
 	}
 
 	GetTableLenght(tableBuffer);
@@ -1000,7 +1000,7 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][2
 
 	return tableBuffer;
 }
-tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25], char tableValues[25][25], int tableSize){
+tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], char tableValues[25][25], int tableSize){
 	int *tableIndexes = NULL;
 	tableIndexes = malloc(sizeof(*tableIndexes)*tableSize);
 
@@ -1010,7 +1010,7 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25]
 
 	for(int i = 0; i < tableSize; i++){
 		for(int j = 0; j < tableBuffer->width; j++){
-			if(strcmp(tableArguments[i], GetCellValue(tableBuffer, 0, j)->value) == 0){
+			if(strcmp(tableColumns[i], GetCellValue(tableBuffer, 0, j)->value) == 0){
 				tableIndexes[i] = j;
 			}
 		}

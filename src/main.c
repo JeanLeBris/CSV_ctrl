@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
 	char inputFileName[100];
 	char outputFileName[100];
 	char tableName[25][25];      // Contains the name of the table taken by the command
-	char tableArguments[25][25]; // Contains all the arguments taken by the command
+	char tableColumns[25][25]; // Contains all the arguments taken by the command
 	char tableValues[25][25];
 	char debug = 0;
 	char noPrint = 0;
@@ -67,8 +67,8 @@ int main(int argc, char *argv[]){
 	while(runProgram){
 		strcpy(tableName[0], "__ALLTABLES__");
 		strcpy(tableName[1], "__END__");
-		strcpy(tableArguments[0], "__ALLARGUMENTS__");
-		strcpy(tableArguments[1], "__END__");
+		strcpy(tableColumns[0], "__ALLCOLUMNS__");
+		strcpy(tableColumns[1], "__END__");
 		strcpy(tableValues[0], "__ALLVALUES__");
 		strcpy(tableValues[1], "__END__");
 		strcpy(inputFileName, "\0");
@@ -194,15 +194,15 @@ int main(int argc, char *argv[]){
 							break;
 						case COL_BIT :
 							iterator1 = 0;
-							while(tableArguments[iterator1][0] != '_' || tableArguments[iterator1][1] != '_'){
+							while(tableColumns[iterator1][0] != '_' || tableColumns[iterator1][1] != '_'){
 								iterator1++;
 							}
-							strcpy(tableArguments[iterator1], node->value);
-							strcpy(tableArguments[iterator1 + 1], "__END__");
+							strcpy(tableColumns[iterator1], node->value);
+							strcpy(tableColumns[iterator1 + 1], "__END__");
 							break;
 						case COL_BIT | ALL_BIT :
-							strcpy(tableArguments[0], "__ALLARGUMENTS__");
-							strcpy(tableArguments[1], "__END__");
+							strcpy(tableColumns[0], "__ALLCOLUMNS__");
+							strcpy(tableColumns[1], "__END__");
 							//controlVar = END_BIT;
 							break;
 						/*
@@ -288,11 +288,11 @@ int main(int argc, char *argv[]){
 							break;
 						case COL_BIT :
 							iterator1 = 0;
-							while(tableArguments[iterator1][0] != '_' || tableArguments[iterator1][1] != '_'){
+							while(tableColumns[iterator1][0] != '_' || tableColumns[iterator1][1] != '_'){
 								iterator1++;
 							}
-							strcpy(tableArguments[iterator1], node->value);
-							strcpy(tableArguments[iterator1 + 1], "__END__");
+							strcpy(tableColumns[iterator1], node->value);
+							strcpy(tableColumns[iterator1 + 1], "__END__");
 							break;
 						case VAL_BIT :
 							iterator1 = 0;
@@ -360,7 +360,7 @@ int main(int argc, char *argv[]){
 			/*action[25];             // Contains the action to do with the data
 			char inputFileName[100];
 			char tableName[25][25];      // Contains the name of the table taken by the command
-			char tableArguments[25][25]; // Contains all the arguments taken by the command
+			char tableColumns[25][25]; // Contains all the arguments taken by the command
 			char tableValues[25][25];*/
 			LogString(logFileName, strcat(strcat(charBuffer, "Action : "), action));
 			strcpy(charBuffer, "\0");
@@ -368,8 +368,8 @@ int main(int argc, char *argv[]){
 			strcpy(charBuffer, "\0");
 			LogString(logFileName, strcat(strcat(charBuffer, "Table name : "), tableName[0]));
 			strcpy(charBuffer, "\0");
-			LogString(logFileName, "Arguments : ");
-			LogData(logFileName, tableArguments);
+			LogString(logFileName, "Columns : ");
+			LogData(logFileName, tableColumns);
 			LogString(logFileName, "Values : ");
 			LogData(logFileName, tableValues);
 		}
@@ -397,11 +397,11 @@ int main(int argc, char *argv[]){
 				else{
 					tableBuffer = GetTable(tablesBrut, tableName);
 					if(tableBuffer != NULL){
-						if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
+						if(strcmp(tableColumns[0], "__ALLCOLUMNS__") == 0){
 							table = tableBuffer; //
 						}
 						else{
-							table = GetAssortedTable(tableBuffer, tableArguments); // FIX the issue of segmentation fault when a column does not exist
+							table = GetAssortedTable(tableBuffer, tableColumns); // FIX the issue of segmentation fault when a column does not exist
 							if(table != NULL){
 								//
 							}
@@ -441,16 +441,16 @@ int main(int argc, char *argv[]){
 				if(log){
 					LogTable(logFileName, table, outputModeVar);
 				}
-			}
-			if(debug){
-				ToPrint(action, tableName, tableArguments, table);
+				if(debug){
+					ToPrint(action, tableName, tableColumns, table);
+				}
 			}
 		}
 		else if(strcmp(action, "create") == 0){
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
 				tablesBrut = CreateFileData(inputFileName);
 			}
-			else if(strcmp(tableArguments[0], "__ALLARGUMENTS__") == 0){
+			else if(strcmp(tableColumns[0], "__ALLCOLUMNS__") == 0){
 				tablesBrut = GetFileData(tablesBrut, inputFileName);
 				tablesBrut = CreateFileTable(tablesBrut, tableName);
 				SetFileData(tablesBrut, inputFileName, outputModeVar);
@@ -458,13 +458,13 @@ int main(int argc, char *argv[]){
 			else if(strcmp(tableValues[0], "__ALLVALUES__") == 0){
 				tablesBrut = GetFileData(tablesBrut, inputFileName);
 				tableBuffer = GetTable(tablesBrut, tableName);
-				tableBuffer = CreateFileTableColumn(tableBuffer, tableArguments);
+				tableBuffer = CreateFileTableColumn(tableBuffer, tableColumns);
 				tablesBrut = SetTable(tablesBrut, tableBuffer);
 				SetFileData(tablesBrut, inputFileName, outputModeVar);
 			}
 			else{
 				iterator1 = 0;
-				for(int i = 0; strcmp(tableArguments[i], "__END__") != 0; i++){
+				for(int i = 0; strcmp(tableColumns[i], "__END__") != 0; i++){
 					iterator1++;
 				}
 				iterator2 = 0;
@@ -477,7 +477,7 @@ int main(int argc, char *argv[]){
 				else{
 					tablesBrut = GetFileData(tablesBrut, inputFileName);
 					tableBuffer = GetTable(tablesBrut, tableName);
-					tableBuffer = CreateFileTableLine(tableBuffer, tableArguments, tableValues, iterator1);
+					tableBuffer = CreateFileTableLine(tableBuffer, tableColumns, tableValues, iterator1);
 					tablesBrut = SetTable(tablesBrut, tableBuffer);
 					SetFileData(tablesBrut, inputFileName, outputModeVar);
 				}

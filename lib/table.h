@@ -73,7 +73,7 @@ tableCellType* GetCellValue(tableType table, int line, int column);
 tableCellType* CopyCell(tableCellType* cell);
 tableLineType CreateTableLine(tableType table, int line, int* orderColumns, int nbColumns);
 tableType GetTable(tableType tables, char tableName[25][25]);
-tableType GetAssortedTable(tableType table, char tableArguments[25][25]);
+tableType GetAssortedTable(tableType table, char tableColumns[25][25]);
 int GetLineLenght(tableType table, int line);
 void GetTableWidth(tableType table);
 void GetTableCellWidth(tableType table);
@@ -82,7 +82,7 @@ void GetTableCellWidth(tableType table);
 
 void PrintGraphicTable(tableType table, FILE *flow, char noColor);
 void PrintCsvTable(tableType table, FILE *flow);
-void ToPrint(char action[25], char tableName[25][25], char tableArguments[25][25], tableType table);
+void ToPrint(char action[25], char tableName[25][25], char tableColumns[25][25], tableType table);
 void PrintError();
 void PrintHelp();
 void PrintStart();
@@ -95,8 +95,8 @@ void ClearTerminal();
 tableType GetFileData(tableType table, char *fileName);
 tableType CreateFileTable(tableType table, char tableName[25][25]);
 void SetFileData(tableType table, char *fileName, char outputModeVar);
-tableType CreateFileTableColumn(tableType tableBuffer, char tableArguments[25][25]);
-tableType CreateFileTableLine(tableType tableBuffer, char tableArguments[25][25], char tableValues[25][25], int tableSize);
+tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25]);
+tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], char tableValues[25][25], int tableSize);
 tableType SetTable(tableType tables, tableType tableBuffer);
 
 #endif
