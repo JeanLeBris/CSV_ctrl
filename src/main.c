@@ -25,6 +25,7 @@
 
 #define GRAPHIC_MODE_BIT (1<<0)
 #define CSV_MODE_BIT (1<<1)
+#define XML_MODE_BIT (1<<2)
 
 #define LOG_ACCESS "./log/"
 
@@ -171,6 +172,9 @@ int main(int argc, char *argv[]){
 							}
 							else if(strcmp(node->value, "csv") == 0){
 								outputModeVar = CSV_MODE_BIT;
+							}
+							else if(strcmp(node->value, "xml") == 0){
+								outputModeVar = XML_MODE_BIT;
 							}
 							break;
 						case INPUT_FILE_BIT :
@@ -429,6 +433,9 @@ int main(int argc, char *argv[]){
 							break;
 						case CSV_MODE_BIT :
 							PrintCsvTable(table, stdout);
+							break;
+						case XML_MODE_BIT :
+							PrintXmlTable(table, stdout);
 							break;
 						default :
 							PrintGraphicTable(table, stdout, noColor);

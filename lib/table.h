@@ -82,6 +82,7 @@ void GetTableCellWidth(tableType table);
 
 void PrintGraphicTable(tableType table, FILE *flow, char noColor);
 void PrintCsvTable(tableType table, FILE *flow);
+void PrintXmlTable(tableType table, FILE *flow);
 void ToPrint(char action[25], char tableName[25][25], char tableColumns[25][25], tableType table);
 void PrintError();
 void PrintHelp();

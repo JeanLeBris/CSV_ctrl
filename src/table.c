@@ -6,6 +6,7 @@
 
 #define GRAPHIC_MODE_BIT (1<<0)
 #define CSV_MODE_BIT (1<<1)
+#define XML_MODE_BIT (1<<2)
 
 #define FILE_ACCESS "./"
 
@@ -787,6 +788,69 @@ void PrintCsvTable(tableType table, FILE *flow){
 		}
 	}
 }
+void PrintXmlTable(tableType table, FILE *flow){
+	if(table != NULL){
+		tableLineType tableLine = table->begin;
+		tableCellType *tableCell = NULL;
+		fprintf(flow, "<table>\n");
+		if(tableLine != NULL){
+			tableCell = tableLine->begin;
+		}
+		fprintf(flow, "<caption>%s</caption>\n", table->name);
+		if(strcmp(table->name, "__ALLTABLES__") != 0){
+			tableLine = table->begin;
+			if(tableLine != NULL){
+				tableCell = tableLine->begin;
+			}
+			if(table->width > 0){
+				fprintf(flow, "<tr>\n");
+			}
+			for(int i = 0; i < table->width; i++){
+				if(tableCell != NULL){
+					fprintf(flow, "<th>%s</th>\n", tableCell->value);
+				}
+				if(tableCell != NULL){
+					tableCell = tableCell->next;
+				}
+			}
+			if(table->width > 0){
+				fprintf(flow, "</tr>\n");
+			}
+			for(int i = 1; i < table->lenght; i++){
+				tableLine = tableLine->next;
+				tableCell = tableLine->begin;
+				fprintf(flow, "<tr>\n");
+				for(int j = 0; j < table->width; j++){
+					if(tableCell != NULL){
+						fprintf(flow, "<td>%s</td>\n", tableCell->value);
+					}
+					if(tableCell != NULL){
+						tableCell = tableCell->next;
+					}
+				}
+				fprintf(flow, "</tr>\n");
+			}
+		}
+		else{
+			tableLine = table->begin;
+			for(int i = 0; i < table->lenght; i++){
+				tableCell = tableLine->begin;
+				fprintf(flow, "<tr>\n");
+				for(int j = 0; j < table->width; j++){
+					if(tableCell != NULL){
+						fprintf(flow, "<td>%s</td>\n", tableCell->value);
+					}
+					if(tableCell != NULL){
+						tableCell = tableCell->next;
+					}
+				}
+				fprintf(flow, "</tr>\n");
+				tableLine = tableLine->next;
+			}
+		}
+		fprintf(flow, "</table>\n");
+	}
+}
 void ToPrint(char action[25], char tableName[25][25], char tableColumns[25][25], tableType table){
 	tableLineType tableLine = table->begin;
 	//tableCellType *tableCell = tableLine->begin;
@@ -939,6 +1003,9 @@ void SetFileData(tableType table, char *fileName, char outputModeVar){
 			break;
 		case CSV_MODE_BIT :
 			PrintCsvTable(table, fic);
+			break;
+		case XML_MODE_BIT :
+			PrintXmlTable(table, fic);
 			break;
 		default :
 			PrintCsvTable(table, fic);
