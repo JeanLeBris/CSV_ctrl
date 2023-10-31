@@ -361,7 +361,7 @@ tableType GetTable(tableType tables, char tableName[25][25]){
 		while(strstr(tableLine->begin->value, "__") == NULL && tableLine->next != NULL){	//
 			tableLine = tableLine->next;													//
 		}																					//
-		if(tableLine->next != NULL)															//
+		if(strstr(tableLine->begin->value, "__") != NULL)															//
 			tableLine = tableLine->back;													//
 		tableBuffer->end = tableLine;														//
 
@@ -560,7 +560,9 @@ void PrintGraphicTable(tableType table, FILE *flow, char noColor){
 					fprintf(flow, "-");
 				}
 			}
-			fprintf(flow, "+\n");
+			if(table->width > 0){
+				fprintf(flow, "+\n");
+			}
 			tableLine = table->begin;
 			if(tableLine != NULL){
 				tableCell = tableLine->begin;
@@ -588,14 +590,18 @@ void PrintGraphicTable(tableType table, FILE *flow, char noColor){
 					tableCell = tableCell->next;
 				}
 			}
-			fprintf(flow, "|\n");
+			if(table->width > 0){
+				fprintf(flow, "|\n");
+			}
 			for(int i = 0; i < table->width; i++){
 				fprintf(flow, "+");
 				for(int j = 0; j < table->cellWidth[i]; j++){
 					fprintf(flow, "-");
 				}
 			}
-			fprintf(flow, "+\n");
+			if(table->width > 0){
+				fprintf(flow, "+\n");
+			}
 			for(int i = 1; i < table->lenght; i++){
 				tableLine = tableLine->next;
 				tableCell = tableLine->begin;
@@ -617,13 +623,15 @@ void PrintGraphicTable(tableType table, FILE *flow, char noColor){
 				}
 				fprintf(flow, "|\n");
 			}
-			for(int i = 0; i < table->width; i++){
-				fprintf(flow, "+");
-				for(int j = 0; j < table->cellWidth[i]; j++){
-					fprintf(flow, "-");
+			if(table->lenght > 1){
+				for(int i = 0; i < table->width; i++){
+					fprintf(flow, "+");
+					for(int j = 0; j < table->cellWidth[i]; j++){
+						fprintf(flow, "-");
+					}
 				}
+				fprintf(flow, "+\n");
 			}
-			fprintf(flow, "+\n");
 		}
 		else{
 			tableLine = table->begin;
