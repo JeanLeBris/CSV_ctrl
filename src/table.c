@@ -796,55 +796,55 @@ void PrintXmlTable(tableType table, FILE *flow){
 		if(tableLine != NULL){
 			tableCell = tableLine->begin;
 		}
-		fprintf(flow, "<caption>%s</caption>\n", table->name);
+		fprintf(flow, "\t<caption>%s</caption>\n", table->name);
 		if(strcmp(table->name, "__ALLTABLES__") != 0){
 			tableLine = table->begin;
 			if(tableLine != NULL){
 				tableCell = tableLine->begin;
 			}
 			if(table->width > 0){
-				fprintf(flow, "<tr>\n");
+				fprintf(flow, "\t<tr>\n");
 			}
 			for(int i = 0; i < table->width; i++){
 				if(tableCell != NULL){
-					fprintf(flow, "<th>%s</th>\n", tableCell->value);
+					fprintf(flow, "\t\t<th>%s</th>\n", tableCell->value);
 				}
 				if(tableCell != NULL){
 					tableCell = tableCell->next;
 				}
 			}
 			if(table->width > 0){
-				fprintf(flow, "</tr>\n");
+				fprintf(flow, "\t</tr>\n");
 			}
 			for(int i = 1; i < table->lenght; i++){
 				tableLine = tableLine->next;
 				tableCell = tableLine->begin;
-				fprintf(flow, "<tr>\n");
+				fprintf(flow, "\t<tr>\n");
 				for(int j = 0; j < table->width; j++){
 					if(tableCell != NULL){
-						fprintf(flow, "<td>%s</td>\n", tableCell->value);
+						fprintf(flow, "\t\t<td>%s</td>\n", tableCell->value);
 					}
 					if(tableCell != NULL){
 						tableCell = tableCell->next;
 					}
 				}
-				fprintf(flow, "</tr>\n");
+				fprintf(flow, "\t</tr>\n");
 			}
 		}
 		else{
 			tableLine = table->begin;
 			for(int i = 0; i < table->lenght; i++){
 				tableCell = tableLine->begin;
-				fprintf(flow, "<tr>\n");
+				fprintf(flow, "\t<tr>\n");
 				for(int j = 0; j < table->width; j++){
 					if(tableCell != NULL){
-						fprintf(flow, "<td>%s</td>\n", tableCell->value);
+						fprintf(flow, "\t\t<td>%s</td>\n", tableCell->value);
 					}
 					if(tableCell != NULL){
 						tableCell = tableCell->next;
 					}
 				}
-				fprintf(flow, "</tr>\n");
+				fprintf(flow, "\t</tr>\n");
 				tableLine = tableLine->next;
 			}
 		}
