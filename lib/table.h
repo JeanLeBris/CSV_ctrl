@@ -51,8 +51,8 @@ int IsEmptyTable(tableType table);
 
 // Push
 
-tableLineType PushBackTableLine(tableLineType tableLine, char *value);
-tableLineType PushBackTableLineBis(tableLineType tableLine, char *value);
+tableLineType PushBackTableLine(tableLineType tableLine, char *value, char sep);
+tableLineType PushBackTableLineCleaned(tableLineType tableLine, char *value, char sep);
 tableType PushBackTable(tableType table, tableLineType tableLine);
 
 // Pull
@@ -81,7 +81,7 @@ void GetTableCellWidth(tableType table);
 // Print
 
 void PrintGraphicTable(tableType table, FILE *flow, char noColor);
-void PrintCsvTable(tableType table, FILE *flow);
+void PrintCsvTable(tableType table, FILE *flow, char sep);
 void PrintXmlTable(tableType table, FILE *flow);
 void ToPrint(char action[25], char tableName[25][25], char tableColumns[25][25], tableType table);
 void PrintError();
@@ -93,11 +93,11 @@ void ClearTerminal();
 
 
 
-tableType GetFileData(tableType table, char *fileName);
-tableType CreateFileTable(tableType table, char tableName[25][25]);
+tableType GetFileData(tableType table, char *fileName, char inputModeVar);
+tableType CreateFileTable(tableType table, char tableName[25][25], char inputModeVar);
 void SetFileData(tableType table, char *fileName, char outputModeVar);
-tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25]);
-tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], char tableValues[25][25], int tableSize);
-tableType SetTable(tableType tables, tableType tableBuffer);
+tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25], char inputModeVar);
+tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], char tableValues[25][25], int tableSize, char inputModeVar);
+tableType SetTable(tableType tables, tableType tableBuffer, char inputModeVar);
 
 #endif

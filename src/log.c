@@ -4,8 +4,9 @@
 #include "../lib/log.h"
 
 #define GRAPHIC_MODE_BIT (1<<0)
-#define CSV_MODE_BIT (1<<1)
-#define XML_MODE_BIT (1<<2)
+#define CSV_SEMICOLON_MODE_BIT (1<<1)
+#define CSV_COMMA_MODE_BIT (1<<2)
+#define XML_MODE_BIT (1<<3)
 
 void LogList(char *fileName, command commandList){
 	commandElement *node = commandList->begin;
@@ -59,8 +60,11 @@ void LogTable(char *fileName, tableType table, char outputModeVar){
 			case GRAPHIC_MODE_BIT :
 				PrintGraphicTable(table, file, 1);
 				break;
-			case CSV_MODE_BIT :
-				PrintCsvTable(table, file);
+			case CSV_SEMICOLON_MODE_BIT :
+				PrintCsvTable(table, file, ';');
+				break;
+			case CSV_COMMA_MODE_BIT :
+				PrintCsvTable(table, file, ',');
 				break;
 			case XML_MODE_BIT :
 				PrintXmlTable(table, file);

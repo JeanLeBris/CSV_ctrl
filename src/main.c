@@ -21,11 +21,13 @@
 #define NO_COMMAND_PRINT_BIT (1<<10)
 #define NO_COLOR_BIT (1<<11)
 #define LOG_BIT (1<<12)
-#define MODE_BIT (1<<13)
+#define INPUT_MODE_BIT (1<<13)
+#define OUTPUT_MODE_BIT (1<<14)
 
 #define GRAPHIC_MODE_BIT (1<<0)
-#define CSV_MODE_BIT (1<<1)
-#define XML_MODE_BIT (1<<2)
+#define CSV_SEMICOLON_MODE_BIT (1<<1)
+#define CSV_COMMA_MODE_BIT (1<<2)
+#define XML_MODE_BIT (1<<3)
 
 #define LOG_ACCESS "./log/"
 
@@ -56,6 +58,7 @@ int main(int argc, char *argv[]){
 	char log = 0;
 	char noColor = 0;
 	unsigned long controlVar = 0;
+	char inputModeVar = 0;
 	char outputModeVar = 0;
 
 	tableType tablesBrut = NewTable();  // The table that get all the file's data as value
@@ -81,6 +84,7 @@ int main(int argc, char *argv[]){
 		noColor = 0;
 
 		controlVar = 0;
+		inputModeVar = 0;
 		outputModeVar = 0;
 
 		/*
@@ -127,11 +131,14 @@ int main(int argc, char *argv[]){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "--output_mode") == 0 || strcmp(node->value, "-om") == 0){
-						controlVar = MODE_BIT;
+					if(strcmp(node->value, "--input_mode") == 0 || strcmp(node->value, "-im") == 0){
+						controlVar = INPUT_MODE_BIT;
 					}
 					else if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
 						controlVar = INPUT_FILE_BIT;
+					}
+					else if(strcmp(node->value, "--output_mode") == 0 || strcmp(node->value, "-om") == 0){
+						controlVar = OUTPUT_MODE_BIT;
 					}
 					else if(strcmp(node->value, "--output") == 0 || strcmp(node->value, "-o") == 0){
 						controlVar = OUTPUT_FILE_BIT;
@@ -166,19 +173,30 @@ int main(int argc, char *argv[]){
 				}
 				else{
 					switch(controlVar){
-						case MODE_BIT :
-							if(strcmp(node->value, "graphic") == 0){
-								outputModeVar = GRAPHIC_MODE_BIT;
+						case INPUT_MODE_BIT :
+							if(strcmp(node->value, "csv;") == 0){
+								inputModeVar = CSV_SEMICOLON_MODE_BIT;
 							}
-							else if(strcmp(node->value, "csv") == 0){
-								outputModeVar = CSV_MODE_BIT;
-							}
-							else if(strcmp(node->value, "xml") == 0){
-								outputModeVar = XML_MODE_BIT;
+							else if(strcmp(node->value, "csv,") == 0){
+								inputModeVar = CSV_COMMA_MODE_BIT;
 							}
 							break;
 						case INPUT_FILE_BIT :
 							strcpy(inputFileName, node->value);
+							break;
+						case OUTPUT_MODE_BIT :
+							if(strcmp(node->value, "graphic") == 0){
+								outputModeVar = GRAPHIC_MODE_BIT;
+							}
+							else if(strcmp(node->value, "csv;") == 0){
+								outputModeVar = CSV_SEMICOLON_MODE_BIT;
+							}
+							else if(strcmp(node->value, "csv,") == 0){
+								outputModeVar = CSV_COMMA_MODE_BIT;
+							}
+							else if(strcmp(node->value, "xml") == 0){
+								outputModeVar = XML_MODE_BIT;
+							}
 							break;
 						case OUTPUT_FILE_BIT :
 							strcpy(outputFileName, node->value);
@@ -258,8 +276,14 @@ int main(int argc, char *argv[]){
 			while(commandList->lenght != 0){
 				node = PullFrontCommand(commandList);
 				if(node->value[0] == '-'){
-					if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
+					if(strcmp(node->value, "--input_mode") == 0 || strcmp(node->value, "-im") == 0){
+						controlVar = INPUT_MODE_BIT;
+					}
+					else if(strcmp(node->value, "--input") == 0 || strcmp(node->value, "-i") == 0){
 						controlVar = INPUT_FILE_BIT;
+					}
+					else if(strcmp(node->value, "--output_mode") == 0 || strcmp(node->value, "-om") == 0){
+						controlVar = OUTPUT_MODE_BIT;
 					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
@@ -279,8 +303,24 @@ int main(int argc, char *argv[]){
 				}
 				else{
 					switch(controlVar){
+						case INPUT_MODE_BIT :
+							if(strcmp(node->value, "csv;") == 0){
+								inputModeVar = CSV_SEMICOLON_MODE_BIT;
+							}
+							else if(strcmp(node->value, "csv,") == 0){
+								inputModeVar = CSV_COMMA_MODE_BIT;
+							}
+							break;
 						case INPUT_FILE_BIT :
 							strcpy(inputFileName, node->value);
+							break;
+						case OUTPUT_MODE_BIT :
+							if(strcmp(node->value, "csv;") == 0){
+								outputModeVar = CSV_SEMICOLON_MODE_BIT;
+							}
+							else if(strcmp(node->value, "csv,") == 0){
+								outputModeVar = CSV_COMMA_MODE_BIT;
+							}
 							break;
 						case TAB_BIT :
 							iterator1 = 0;
@@ -392,7 +432,7 @@ int main(int argc, char *argv[]){
 			PrintHelp();
 		}
 		else if(strcmp(action, "print") == 0){
-			tablesBrut = GetFileData(tablesBrut, inputFileName);
+			tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
 			if(tablesBrut != NULL){
 				if(strcmp(tableName[0], "__ALLTABLES__") == 0){
 					tableBuffer = tablesBrut;
@@ -431,8 +471,11 @@ int main(int argc, char *argv[]){
 						case GRAPHIC_MODE_BIT :
 							PrintGraphicTable(table, stdout, noColor);
 							break;
-						case CSV_MODE_BIT :
-							PrintCsvTable(table, stdout);
+						case CSV_SEMICOLON_MODE_BIT :
+							PrintCsvTable(table, stdout, ';');
+							break;
+						case CSV_COMMA_MODE_BIT :
+							PrintCsvTable(table, stdout, ',');
 							break;
 						case XML_MODE_BIT :
 							PrintXmlTable(table, stdout);
@@ -458,15 +501,15 @@ int main(int argc, char *argv[]){
 				tablesBrut = CreateFileData(inputFileName);
 			}
 			else if(strcmp(tableColumns[0], "__ALLCOLUMNS__") == 0){
-				tablesBrut = GetFileData(tablesBrut, inputFileName);
-				tablesBrut = CreateFileTable(tablesBrut, tableName);
+				tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
+				tablesBrut = CreateFileTable(tablesBrut, tableName, inputModeVar);
 				SetFileData(tablesBrut, inputFileName, outputModeVar);
 			}
 			else if(strcmp(tableValues[0], "__ALLVALUES__") == 0){
-				tablesBrut = GetFileData(tablesBrut, inputFileName);
+				tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
 				tableBuffer = GetTable(tablesBrut, tableName);
-				tableBuffer = CreateFileTableColumn(tableBuffer, tableColumns);
-				tablesBrut = SetTable(tablesBrut, tableBuffer);
+				tableBuffer = CreateFileTableColumn(tableBuffer, tableColumns, inputModeVar);
+				tablesBrut = SetTable(tablesBrut, tableBuffer, inputModeVar);
 				SetFileData(tablesBrut, inputFileName, outputModeVar);
 			}
 			else{
@@ -482,10 +525,10 @@ int main(int argc, char *argv[]){
 					PrintError();
 				}
 				else{
-					tablesBrut = GetFileData(tablesBrut, inputFileName);
+					tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
 					tableBuffer = GetTable(tablesBrut, tableName);
-					tableBuffer = CreateFileTableLine(tableBuffer, tableColumns, tableValues, iterator1);
-					tablesBrut = SetTable(tablesBrut, tableBuffer);
+					tableBuffer = CreateFileTableLine(tableBuffer, tableColumns, tableValues, iterator1, inputModeVar);
+					tablesBrut = SetTable(tablesBrut, tableBuffer, inputModeVar);
 					SetFileData(tablesBrut, inputFileName, outputModeVar);
 				}
 			}

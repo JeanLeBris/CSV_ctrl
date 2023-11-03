@@ -5,8 +5,9 @@
 #include "../lib/table.h"
 
 #define GRAPHIC_MODE_BIT (1<<0)
-#define CSV_MODE_BIT (1<<1)
-#define XML_MODE_BIT (1<<2)
+#define CSV_SEMICOLON_MODE_BIT (1<<1)
+#define CSV_COMMA_MODE_BIT (1<<2)
+#define XML_MODE_BIT (1<<3)
 
 #define FILE_ACCESS "./"
 
@@ -80,7 +81,7 @@ int IsEmptyTable(tableType table){
 
 // Push
 
-tableLineType PushBackTableLine(tableLineType tableLine, char *line){
+tableLineType PushBackTableLine(tableLineType tableLine, char *line, char sep){
 	int i = 0;
 	int j = 0;
 	tableCellType *node = NULL;
@@ -93,7 +94,7 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 		node->lenght = 0;
 		j = 0;
 		
-		while(line[i] != ';' && line[i] != '\n' && line[i] != '\0'){
+		while(line[i] != sep && line[i] != '\n' && line[i] != '\0'){
 			if(line[i] < 32);
 			else{
 				node->value[j] = line[i];
@@ -135,10 +136,10 @@ tableLineType PushBackTableLine(tableLineType tableLine, char *line){
 
 	return tableLine;
 }
-tableLineType PushBackTableLineCleaned(tableLineType tableLine, char *line){
+tableLineType PushBackTableLineCleaned(tableLineType tableLine, char *line, char sep){
 	tableCellType *node = NULL;
 
-	tableLine = PushBackTableLine(tableLine, line);
+	tableLine = PushBackTableLine(tableLine, line, sep);
 
 	while(tableLine != NULL && tableLine->end->lenght == 0 /*|| tableLine->end->lenght == 1*/ && tableLine->lenght > 1){
 		node = tableLine->end;
@@ -755,7 +756,7 @@ void PrintGraphicTable(tableType table, FILE *flow, char noColor){
 // 		}
 // 	}
 // }
-void PrintCsvTable(tableType table, FILE *flow){
+void PrintCsvTable(tableType table, FILE *flow, char sep){
 	if(table != NULL){
 		tableLineType tableLine = table->begin;
 		tableCellType *tableCell = NULL;
@@ -765,7 +766,7 @@ void PrintCsvTable(tableType table, FILE *flow){
 		if(strcmp(table->name, "__ALLTABLES__") != 0){
 			fprintf(flow, "__%s__", table->name);
 			for(int i = 0; i < table->width - 1; i++){
-				fprintf(flow, ";");
+				fprintf(flow, "%c", sep);
 			}
 			fprintf(flow, "\n");
 		}
@@ -776,7 +777,7 @@ void PrintCsvTable(tableType table, FILE *flow){
 					fprintf(flow, "%s", tableCell->value);
 				}
 				if(j != table->width - 1){
-					fprintf(flow, ";");
+					fprintf(flow, "%c", sep);
 				}
 				if(tableCell != NULL){
 					tableCell = tableCell->next;
@@ -947,11 +948,23 @@ void ClearTerminal(){
 
 
 
-tableType GetFileData(tableType table, char *fileName){
+tableType GetFileData(tableType table, char *fileName, char inputModeVar){
 	tableLineType tableLine = NewTableLine();
 	char fileLineBrut[500] = "\0";
 	char fileLineBuffer[500] = "\t"; // default value that should not be found in the file
 	char srcFileName[100] = "\0";
+	char sep;
+	switch(inputModeVar){
+		case CSV_SEMICOLON_MODE_BIT :
+			sep = ';';
+			break;
+		case CSV_COMMA_MODE_BIT :
+			sep = ',';
+			break;
+		default :
+			sep = ';';
+			break;
+	}
 	strcat(strcat(srcFileName, FILE_ACCESS), fileName);
 	FILE *fic = fopen(srcFileName, "r");
 	if(fic == NULL){
@@ -962,7 +975,7 @@ tableType GetFileData(tableType table, char *fileName){
 		fgets(fileLineBrut, 500, fic);
 		if(strcmp(fileLineBuffer, fileLineBrut) != 0){
 			tableLine = NewTableLine();
-			tableLine = PushBackTableLineCleaned(tableLine, fileLineBrut);
+			tableLine = PushBackTableLineCleaned(tableLine, fileLineBrut, sep);
 			table = PushBackTable(table, tableLine);
 			strcpy(fileLineBuffer, fileLineBrut);
 		}
@@ -974,14 +987,26 @@ tableType GetFileData(tableType table, char *fileName){
 
 	return table;
 }
-tableType CreateFileTable(tableType table, char tableName[25][25]){
+tableType CreateFileTable(tableType table, char tableName[25][25], char inputModeVar){
 	char tableNameBuffer[29];
 	tableLineType tableLine = NewTableLine();
+	char sep;
+	switch(inputModeVar){
+		case CSV_SEMICOLON_MODE_BIT :
+			sep = ';';
+			break;
+		case CSV_COMMA_MODE_BIT :
+			sep = ',';
+			break;
+		default :
+			sep = ';';
+			break;
+	}
 	for(int i = 0; strcmp(tableName[i], "__END__") != 0; i++){
 		strcpy(tableNameBuffer, "\0");
 		tableLine = NewTableLine();
 		strcat(strcat(strcat(tableNameBuffer, "__"), tableName[i]), "__\0");
-		tableLine = PushBackTableLineCleaned(tableLine, tableNameBuffer);
+		tableLine = PushBackTableLineCleaned(tableLine, tableNameBuffer, sep);
 		table = PushBackTable(table, tableLine);
 	}
 
@@ -1001,14 +1026,17 @@ void SetFileData(tableType table, char *fileName, char outputModeVar){
 		case GRAPHIC_MODE_BIT :
 			PrintGraphicTable(table, fic, 1);
 			break;
-		case CSV_MODE_BIT :
-			PrintCsvTable(table, fic);
+		case CSV_SEMICOLON_MODE_BIT :
+			PrintCsvTable(table, fic, ';');
+			break;
+		case CSV_COMMA_MODE_BIT :
+			PrintCsvTable(table, fic, ',');
 			break;
 		case XML_MODE_BIT :
 			PrintXmlTable(table, fic);
 			break;
 		default :
-			PrintCsvTable(table, fic);
+			PrintCsvTable(table, fic, ';');
 			break;
 	}
 	fclose(fic);
@@ -1049,8 +1077,20 @@ void SetFileData(tableType table, char *fileName, char outputModeVar){
 // 	}
 // 	fclose(fic);
 // }
-tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25]){
+tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25], char inputModeVar){
 	tableLineType tableLine = NULL;
+	char sep;
+	switch(inputModeVar){
+		case CSV_SEMICOLON_MODE_BIT :
+			sep = ';';
+			break;
+		case CSV_COMMA_MODE_BIT :
+			sep = ',';
+			break;
+		default :
+			sep = ';';
+			break;
+	}
 	if(tableBuffer->begin == NULL){
 		tableLine = malloc(sizeof(*tableLine));
 		tableLine->lenght = 0;
@@ -1066,7 +1106,7 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25]
 	}
 	
 	for(int i = 0; strcmp(tableColumns[i], "__END__") != 0; i++){
-		tableLine = PushBackTableLineCleaned(tableLine, tableColumns[i]);
+		tableLine = PushBackTableLineCleaned(tableLine, tableColumns[i], sep);
 	}
 
 	GetTableLenght(tableBuffer);
@@ -1075,9 +1115,22 @@ tableType CreateFileTableColumn(tableType tableBuffer, char tableColumns[25][25]
 
 	return tableBuffer;
 }
-tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], char tableValues[25][25], int tableSize){
+tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], char tableValues[25][25], int tableSize, char inputModeVar){
 	int *tableIndexes = NULL;
 	tableIndexes = malloc(sizeof(*tableIndexes)*tableSize);
+	
+	char sep;
+	switch(inputModeVar){
+		case CSV_SEMICOLON_MODE_BIT :
+			sep = ';';
+			break;
+		case CSV_COMMA_MODE_BIT :
+			sep = ',';
+			break;
+		default :
+			sep = ';';
+			break;
+	}
 
 	for(int i = 0; i < tableSize; i++){
 		tableIndexes[i] = -1;
@@ -1108,7 +1161,7 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], 
 
 	tableLineType tableLine = NewTableLine();
 
-	tableLine = PushBackTableLine(tableLine, tempString);
+	tableLine = PushBackTableLine(tableLine, tempString, sep);
 
 	free(tempString);
 
@@ -1122,13 +1175,25 @@ tableType CreateFileTableLine(tableType tableBuffer, char tableColumns[25][25], 
 
 	return tableBuffer;
 }
-tableType SetTable(tableType tables, tableType tableBuffer){
+tableType SetTable(tableType tables, tableType tableBuffer, char inputModeVar){
 	char tableNameBuffer[29];
 	tableLineType tableLine = NewTableLine();
+	char sep;
+	switch(inputModeVar){
+		case CSV_SEMICOLON_MODE_BIT :
+			sep = ';';
+			break;
+		case CSV_COMMA_MODE_BIT :
+			sep = ',';
+			break;
+		default :
+			sep = ';';
+			break;
+	}
 
 	strcpy(tableNameBuffer, "\0");
 	strcat(strcat(strcat(tableNameBuffer, "__"), tableBuffer->name), "__\0");
-	tableLine = PushBackTableLineCleaned(tableLine, tableNameBuffer);
+	tableLine = PushBackTableLineCleaned(tableLine, tableNameBuffer, sep);
 	tables = PushBackTable(tables, tableLine);
 	tables->end->next = tableBuffer->begin;
 	tableBuffer->begin->back = tables->end;
