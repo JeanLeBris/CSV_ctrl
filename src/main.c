@@ -285,6 +285,9 @@ int main(int argc, char *argv[]){
 					else if(strcmp(node->value, "--output_mode") == 0 || strcmp(node->value, "-om") == 0){
 						controlVar = OUTPUT_MODE_BIT;
 					}
+					else if(strcmp(node->value, "--output") == 0 || strcmp(node->value, "-o") == 0){
+						controlVar = OUTPUT_FILE_BIT;
+					}
 					else if(strcmp(node->value, "--table") == 0 || strcmp(node->value, "-t") == 0){
 						controlVar = TAB_BIT;
 					}
@@ -321,6 +324,9 @@ int main(int argc, char *argv[]){
 							else if(strcmp(node->value, "csv,") == 0){
 								outputModeVar = CSV_COMMA_MODE_BIT;
 							}
+							break;
+						case OUTPUT_FILE_BIT :
+							strcpy(outputFileName, node->value);
 							break;
 						case TAB_BIT :
 							iterator1 = 0;
@@ -497,20 +503,27 @@ int main(int argc, char *argv[]){
 			}
 		}
 		else if(strcmp(action, "create") == 0){
+			if(outputModeVar == 0){
+				outputModeVar = inputModeVar;
+			}
+			if(strcmp(outputFileName, "\0") == 0){
+				strcpy(outputFileName, inputFileName);
+			}
+
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
 				tablesBrut = CreateFileData(inputFileName);
 			}
 			else if(strcmp(tableColumns[0], "__ALLCOLUMNS__") == 0){
 				tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
 				tablesBrut = CreateFileTable(tablesBrut, tableName, inputModeVar);
-				SetFileData(tablesBrut, inputFileName, outputModeVar);
+				SetFileData(tablesBrut, outputFileName, outputModeVar);
 			}
 			else if(strcmp(tableValues[0], "__ALLVALUES__") == 0){
 				tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
 				tableBuffer = GetTable(tablesBrut, tableName);
 				tableBuffer = CreateFileTableColumn(tableBuffer, tableColumns, inputModeVar);
 				tablesBrut = SetTable(tablesBrut, tableBuffer, inputModeVar);
-				SetFileData(tablesBrut, inputFileName, outputModeVar);
+				SetFileData(tablesBrut, outputFileName, outputModeVar);
 			}
 			else{
 				iterator1 = 0;
@@ -529,7 +542,7 @@ int main(int argc, char *argv[]){
 					tableBuffer = GetTable(tablesBrut, tableName);
 					tableBuffer = CreateFileTableLine(tableBuffer, tableColumns, tableValues, iterator1, inputModeVar);
 					tablesBrut = SetTable(tablesBrut, tableBuffer, inputModeVar);
-					SetFileData(tablesBrut, inputFileName, outputModeVar);
+					SetFileData(tablesBrut, outputFileName, outputModeVar);
 				}
 			}
 		}

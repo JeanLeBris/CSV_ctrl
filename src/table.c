@@ -804,32 +804,40 @@ void PrintXmlTable(tableType table, FILE *flow){
 				tableCell = tableLine->begin;
 			}
 			if(table->width > 0){
-				fprintf(flow, "\t<tr>\n");
+				fprintf(flow, "\t<thead>\n");
+				fprintf(flow, "\t\t<tr>\n");
 			}
 			for(int i = 0; i < table->width; i++){
 				if(tableCell != NULL){
-					fprintf(flow, "\t\t<th>%s</th>\n", tableCell->value);
+					fprintf(flow, "\t\t\t<th>%s</th>\n", tableCell->value);
 				}
 				if(tableCell != NULL){
 					tableCell = tableCell->next;
 				}
 			}
 			if(table->width > 0){
-				fprintf(flow, "\t</tr>\n");
+				fprintf(flow, "\t\t</tr>\n");
+				fprintf(flow, "\t</thead>\n");
+			}
+			if(table->lenght > 1){
+				fprintf(flow, "\t<tbody>\n");
 			}
 			for(int i = 1; i < table->lenght; i++){
 				tableLine = tableLine->next;
 				tableCell = tableLine->begin;
-				fprintf(flow, "\t<tr>\n");
+				fprintf(flow, "\t\t<tr>\n");
 				for(int j = 0; j < table->width; j++){
 					if(tableCell != NULL){
-						fprintf(flow, "\t\t<td>%s</td>\n", tableCell->value);
+						fprintf(flow, "\t\t\t<td>%s</td>\n", tableCell->value);
 					}
 					if(tableCell != NULL){
 						tableCell = tableCell->next;
 					}
 				}
-				fprintf(flow, "\t</tr>\n");
+				fprintf(flow, "\t\t</tr>\n");
+			}
+			if(table->lenght > 1){
+				fprintf(flow, "\t</tbody>\n");
 			}
 		}
 		else{
