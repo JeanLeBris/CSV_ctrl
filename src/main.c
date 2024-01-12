@@ -511,7 +511,7 @@ int main(int argc, char *argv[]){
 			}
 
 			if(strcmp(tableName[0], "__ALLTABLES__") == 0){
-				tablesBrut = CreateFileData(inputFileName);
+				tablesBrut = CreateFileData(outputFileName);
 			}
 			else if(strcmp(tableColumns[0], "__ALLCOLUMNS__") == 0){
 				tablesBrut = GetFileData(tablesBrut, inputFileName, inputModeVar);
