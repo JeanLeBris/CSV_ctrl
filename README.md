@@ -1,5 +1,7 @@
 # CSV_ctrl
 
+![Capture 7](https://github.com/JeanLeBris/CSV_ctrl/assets/56840109/80023956-d5de-4b90-9f16-176a42cb4f6e)
+
 ## Explainations
 
 This repository is a small personal project to train in C programming
