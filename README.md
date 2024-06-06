@@ -42,13 +42,14 @@ print [--input | -i] [input file] [--table | -t] [--all | -a | table name]
 print [--input | -i] [input file] [--table | -t] [table name] [--columns | --cols | -c] [--all | -a | column1, column2, ...]
 	Print all the columns from a table of a csv file or print only the selected columns
 
+print [parameters] [--input_mode | -im] [csv, | csv;]
+	Allow to choose the intput format of the file
+
 print [parameters] [--output | -o] [output file]
 	Save the generated table in an output file
 
-print [parameters] [--output_mode | -om] [graphic | csv]
+print [parameters] [--output_mode | -om] [graphic | csv, | csv; | xml]
 	Allow to choose the output format of the generated table
-	The default format of a generated table on stdout output is graphic
-	The default format of a generated table saved using the '-o' argument is csv
 
 print [parameters] [--debug | -d]
 	Print additional informations about the selected table
